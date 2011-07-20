@@ -39,13 +39,17 @@
 
           </c:if>
           
-        <div id="main" class="round">
-            <form method="post" action="upload.jsp" name="upload" enctype="multipart/form-data">
-                <input type="file" name="uploadfile" />
-                <input type="hidden" name="todo" value="upload" />
-                <input type="submit" value="Agregar" />
+        <div id="main" class="round" >
+            <p> Upload Capabilities </p>
+            <form method="post" action="upload.jsp" name="upload" enctype="multipart/form-data" class="formUser" > 
+                <ul>
+                    <li> <label> Name </label> <input type="text" name="Name" /> </li>
+                    <li> <label> Comments </label> <textarea cols="40" rows="5" name="comments"> </textarea> </li>
+                    <li> <label> Select a file to upload </label> <input type="text" name="uploadfile" /> </li>
+                    <li> <input type="hidden" name="todo" value="upload" /> </li
+                    <li> <input type="submit" value="Upload" /> </li>
+                </ul>
             </form>
-
 
 <%
 if (MultipartFormDataRequest.isMultipartFormData(request)) {

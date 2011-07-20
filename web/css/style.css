@@ -1,25 +1,25 @@
 /* header */
 
 #header {
- padding-top: 20px;
+    padding-top: 20px;
 }
 
 #header ul{
-  background: #fff;
-  margin:auto;
-  float:right;
-  padding:10px;
-  }
+    background: #fff;
+    margin:auto;
+    float:right;
+    padding:10px;
+}
 
 
 #header img {
-  background: #fff;
-  margin-top: 10px;  
-  width: 710px;
+    background: #fff;
+    margin-top: 10px;
+    width: 710px;
 }
 
 .linksHeader{
-	text-align:center;
+    text-align:center;
 }
 
 
@@ -31,7 +31,7 @@
     padding:10px;
     background: #fff;
     float:center;
-	
+
 }
 
 
@@ -42,66 +42,66 @@
 /* footer */
 
 #footer {
-  float:right;
-  background:#fff;
-  margin-top:20px;
+    float:right;
+    background:#fff;
+    margin-top:20px;
 }
 
 
 /* Round corners */
 
 .round {
-  -moz-border-radius:    10px;
-  -webkit-border-radius: 10px;
-  border-radius:         10px;  
+    -moz-border-radius:    10px;
+    -webkit-border-radius: 10px;
+    border-radius:         10px;
 }
 
 .round li{
-  color: #0D2082;
+    color: #0D2082;
 }
 
 .container {
-  width: 710px; 
-  margin:auto;
-  margin-top: 20px;
+    width: 710px;
+    margin:auto;
+    margin-top: 20px;
 }
 
 body {
-  background: #0082a3;
-  text-align: center;
+    background: #0082a3;
+    text-align: center;
 }
 
 
 
 
 section {
-  margin-top: 10px;
-  font-size: 100%;
-  background: #fff; 
+    margin-top: 10px;
+    font-size: 100%;
+    background: #fff;
 }
 
 section h1 {
-  font-size: 200%;
+    font-size: 200%;
 }
 
 /* Links */
 
 a {
-  color: #09c;
-  text-decoration: none;
+    color: #09c;
+    text-decoration: none;
 }
 
 a:hover {
-  color: #069;
-  text-decoration: underline;
+    color: #069;
+    text-decoration: underline;
 }
 
 a:visited {
-  color: #069;
+    color: #069;
 }
 
 ul{
-  list-style:none;
+    list-style:none;
 }
 
 
@@ -115,7 +115,7 @@ ul{
 /* login */
 
 .formUser ul li{
-	display: block;
+    display: block;
 }
 
 .formUser ul li input[type="checkbox"]{
@@ -123,10 +123,10 @@ ul{
 }
 
 .formUser{
-  background: #fff;
-  padding:10px;
-  
- 
+    background: #fff;
+    padding:10px;
+
+
 }
 
 .formUser ul li{
@@ -153,14 +153,14 @@ label{
     margin-top:5px;
 }
 
-.formUser input[type="text"], input[type="password"]{
+.formUser input[type="text"], input[type="password"], textarea{
     border-color: #3F4FDB;
     border-style:solid;
     border-width: 2px;
 
-  -moz-border-radius:   5px;
-  -webkit-border-radius: 5px;
-  border-radius:      5px;
+    -moz-border-radius:   5px;
+    -webkit-border-radius: 5px;
+    border-radius:      5px;
 }
 
 .formUser input[type="submit"]{
@@ -168,35 +168,35 @@ label{
     color: #D7EAEF;
     width: 100px;
     height: 40px;
-      -moz-border-radius:   20px;
-  -webkit-border-radius: 20px;
-  border-radius:      20px;
-  margin-top: 10px;
+    -moz-border-radius:   20px;
+    -webkit-border-radius: 20px;
+    border-radius:      20px;
+    margin-top: 10px;
 }
 
 /* Navigation */
 
 nav {
-  background-color: white;
-/*  padding: 0 0.4em;*/
-  padding: 5px;
-  white-space: nowrap;
+    background-color: white;
+    /*  padding: 0 0.4em;*/
+    padding: 5px;
+    white-space: nowrap;
 }
 
 ul li {
-  list-style-type: none;
-  display: inline-block;
+    list-style-type: none;
+    display: inline-block;
 }
 
 ul li a {
-  padding: 0 5px;
-  font-weight: bold;
+    padding: 0 5px;
+    font-weight: bold;
 }
 
 ul li a:visited {
-  color: #09c;
+    color: #09c;
 }
 
 ul li a:hover {
-  text-decoration: underline;
+    text-decoration: underline;
 }
