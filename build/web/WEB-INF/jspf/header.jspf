@@ -16,12 +16,13 @@
       <c:otherwise>
           <li><a href="<c:url value="myAccount.jsp" />"> My Account </a> </li>
           <li><a href="<c:url value="logout.jsp" />"> Log out</a> </li>
+          <li><a href="<c:url value="upload.jsp" />"> Upload </a> </li>
       </c:otherwise>
       </c:choose>
 
       
       
-      <li><a href="<c:url value="upload.jsp" />"> Upload </a> </li>
+      <li><a href="<c:url value="#" />"> Download </a> </li>
     </ul>
     </div>
  <div id="logo">
