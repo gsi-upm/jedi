@@ -58,10 +58,6 @@ public class UploadData extends HttpServlet {
                 if (!item.isFormField()) {
                     File file = new File(destinationDir, item.getName());
                     file.mkdir();
-                    Date date = new Date();
-                    
-
-
                     String folderFile = getServletContext().getRealPath(DESTINATION_DIR_PATH + File.separator + item.getName());
                     File fileTwo = new File(folderFile, item.getName());
                     item.write(fileTwo);
@@ -74,9 +70,9 @@ public class UploadData extends HttpServlet {
                 }
             }
         } catch (FileUploadException ex) {
-            log("Error encountered while parsing the request", ex);
+            
         } catch (Exception ex) {
-            log("Error encountered while uploading file", ex);
+            
         }
     }
 
@@ -107,12 +103,9 @@ public class UploadData extends HttpServlet {
 
         out.close();
 
-        //…Y luego mediante el paquete com.ice.tar extraemos la informacion del .tar temporal
         TarArchive tarArchive = new TarArchive(new FileInputStream(tempPath));
         tarArchive.extractContents(new File(unZipPath));
         tarArchive.closeArchive();
-
-        //Borrado del archivo remporal (.tar)
         new File(tempPath).delete();
     }
 }
