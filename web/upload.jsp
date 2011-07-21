@@ -36,7 +36,7 @@
                 <ul>
                     <li> <label> Name </label> <input type="text" name="Name" /> </li>
                     <li> <label> Description </label> <textarea cols="40" rows="5" name="comments"> </textarea> </li>
-                    <li> <label> Select a file to upload </label> <input type="file" name="uploadfile" /> </li>
+                    <li> <label> Select a file to upload (Max size: 10MB)</label> <input type="file" name="uploadfile" /> </li>
                     <li> <input type="hidden" name="todo" value="upload" /> </li
                     <li> <input type="submit" value="Upload" /> </li>
                 </ul>
