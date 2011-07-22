@@ -34,7 +34,7 @@
             <p> Upload Capabilities </p>
             <form method="post" action="UploadData" name="upload" enctype="multipart/form-data" class="formUser" >
                 <ul>
-                    <li> <label> Name </label> <input type="text" name="Name" /> </li>
+                    <li> <label> Name </label> <input type="text" name="nameCap" /> </li>
                     <li> <label> Description </label> <textarea cols="40" rows="5" name="comments"> </textarea> </li>
                     <li> <label> Select a file to upload (Max size: 10MB)</label> <input type="file" name="uploadfile" /> </li>
                     <li> <input type="hidden" name="todo" value="upload" /> </li

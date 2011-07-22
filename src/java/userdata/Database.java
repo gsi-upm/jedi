@@ -84,8 +84,7 @@ protected void doPost(HttpServletRequest request, HttpServletResponse response) 
                 HttpSession session = request.getSession(true);
                 Capabilities cap = (Capabilities) session.getAttribute("capabilitie");
                 
-                //Capabilities cap = new Capabilities( "testCap", "0", actualDate, "testUser", "testComments" );
-
+                
                 String name = cap.getName();
                 LOGGER.severe(name);
                 String id = cap.getId();

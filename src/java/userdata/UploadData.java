@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Random;
 
 
 import javax.servlet.ServletConfig;
@@ -76,8 +77,13 @@ public class UploadData extends HttpServlet {
                     Date date = new Date();
                     Long actualDate = date.getTime();
 
+                    String comments = request.getParameter("comments");
+                    String nameCap = request.getParameter("nameCap");
 
-                    Capabilities c = new Capabilities( "testaaaaaCap", "0", actualDate, "qqqq", "aa" );
+                    Random r = new Random();
+                    int id = r.nextInt();
+
+                    Capabilities c = new Capabilities( nameCap, String.valueOf(id), actualDate, userName,  comments );
                     RequestDispatcher dispatcher = request.getRequestDispatcher("Database" + "?" + "action" + "=" + "saveData");
                     request.getSession().setAttribute("capabilitie", c);
                     dispatcher.forward(request, response);
