@@ -5,11 +5,14 @@ import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
 
+
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
+
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.RequestDispatcher;
 
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileUploadException;
@@ -22,6 +25,7 @@ import java.io.FileOutputStream;
 import java.io.OutputStream;
 import java.util.Date;
 import com.ice.tar.TarArchive;
+import javax.servlet.http.HttpSession;
 
 public class UploadData extends HttpServlet {
 
@@ -62,20 +66,29 @@ public class UploadData extends HttpServlet {
                     File fileTwo = new File(folderFile, item.getName());
                     item.write(fileTwo);
 
-                    
                     UploadData u = new UploadData();
                     u.unTarGz(fileTwo, folderFile);
 
-                    
+                    HttpSession session = request.getSession(true);
+                    User user = (User) session.getValue("validUser");
+
+                    String userName = user.getUser();
+                    Date date = new Date();
+                    Long actualDate = date.getTime();
+
+
+                    Capabilities c = new Capabilities( "testaaaaaCap", "0", actualDate, "qqqq", "aa" );
+                    RequestDispatcher dispatcher = request.getRequestDispatcher("Database" + "?" + "action" + "=" + "saveData");
+                    request.getSession().setAttribute("capabilitie", c);
+                    dispatcher.forward(request, response);
                 }
             }
         } catch (FileUploadException ex) {
-            
+            System.out.println("Exception: " + ex.getMessage());
         } catch (Exception ex) {
-            
+            System.out.println("Exception: " + ex.getMessage());
         }
     }
-
 
     /**
      * unTarGz: Decompress tar.gz files
@@ -84,7 +97,7 @@ public class UploadData extends HttpServlet {
      * @throws Exception
      * //http://everac99.wordpress.com/
      */
-    private void unTarGz( File zipPath, final String unZipPath) throws Exception {
+    private void unTarGz(File zipPath, final String unZipPath) throws Exception {
         GZIPInputStream gzipInputStream = new GZIPInputStream(new FileInputStream(zipPath));
 
         String tempDir = unZipPath.substring(0, unZipPath.lastIndexOf('/'));
@@ -100,7 +113,6 @@ public class UploadData extends HttpServlet {
         }
 
         gzipInputStream.close();
-
         out.close();
 
         TarArchive tarArchive = new TarArchive(new FileInputStream(tempPath));

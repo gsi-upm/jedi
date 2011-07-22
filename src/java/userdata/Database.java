@@ -6,6 +6,7 @@
 package userdata;
 
 import java.sql.*;
+import java.util.Date;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -16,6 +17,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.io.IOException;
 import javax.servlet.RequestDispatcher;
+import javax.servlet.http.HttpSession;
+
+
 
 /**
  *
@@ -38,8 +42,9 @@ public class Database extends HttpServlet{
           Class.forName("com.mysql.jdbc.Driver");
           String urlPath = getServletContext().getRealPath(urlJDBC);
           if(connection == null ){
-              connection = DriverManager.getConnection("jdbc:msysql:file" + urlPath, userJDBC, passwordJDBC );
-          }         
+          //    connection = DriverManager.getConnection("jdbc:msysql:" + urlPath, userJDBC, passwordJDBC );
+              connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/gsiWeb", "root", "root");
+      }
       }
       catch(SQLException exSQL ){
          LOGGER.severe("Error creating the connection " + exSQL.getMessage());
@@ -63,18 +68,40 @@ public void destroy(){
 }
 
 
-protected void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-    String action = request.getParameter("accion");
+    @Override
+protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    String action = request.getParameter("action");
         if (action == null) {
-            // ver qué hacer, procesar mensaje, etc.
-            LOGGER.warning("Recibido Action null");
+            LOGGER.warning("Action null");
             return;
         }
-        if (action.equals("addStudent")) {
+        if (action.equals("saveData")) {
             PreparedStatement smt;
+            LOGGER.severe("Action: save data");
+            
             try {
-                smt = connection.prepareStatement("INSERT INTO ALUMNOS (DNI,NOM,NDIR,CURSO) VALUES(?,?,?,?)");
-                RequestDispatcher dispatcher = request.getRequestDispatcher("/ejemploConServlets/menu.jsp");
+                
+                HttpSession session = request.getSession(true);
+                Capabilities cap = (Capabilities) session.getAttribute("capabilitie");
+                
+                //Capabilities cap = new Capabilities( "testCap", "0", actualDate, "testUser", "testComments" );
+
+                String name = cap.getName();
+                LOGGER.severe(name);
+                String id = cap.getId();
+                Long date = cap.getDate();
+                String userUpload = cap.getUserUpload();
+                String comments = cap.getComments();
+                
+                smt = connection.prepareStatement("INSERT INTO capabilities (USER,ID,DATE,USERUPLOAD, COMMENTS) VALUES(?,?,?,?,?)");
+                smt.setString(1, name);
+                smt.setLong(2,date);
+                smt.setString(3, id);
+                smt.setString(4,userUpload);
+                smt.setString(5, comments);
+                smt.executeUpdate();
+                
+                RequestDispatcher dispatcher = request.getRequestDispatcher("uploadCorrect.jsp");
                 dispatcher.forward(request, response);
             } catch (SQLException ex) {
                 LOGGER.info("Fallo Insert " + ex.getMessage());

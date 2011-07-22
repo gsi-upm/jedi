@@ -8,6 +8,34 @@
         <servlet-name>UploadData</servlet-name>
         <url-pattern>/UploadData</url-pattern>
     </servlet-mapping>
+    <servlet>
+        <servlet-name>Database</servlet-name>
+        <servlet-class>userdata.Database</servlet-class>
+        <init-param>
+            <param-name>urlJDBC</param-name>
+            <param-value>/WEB-INF/db/db</param-value>
+        </init-param>
+        <init-param>
+            <param-name>driverJDBC</param-name>
+            <param-value>com.mysql.jdbc.Driver</param-value>
+        </init-param>
+        <init-param>
+            <param-name>userJDBC</param-name>
+            <param-value>root</param-value>
+        </init-param>
+        <init-param>
+            <param-name>passwordJDBC</param-name>
+            <param-value>root</param-value>
+        </init-param>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>Database</servlet-name>
+        <url-pattern>/Database</url-pattern>
+        <init-param>
+            <param-name>urlJDBC</param-name>
+            <param-value>W </param-value>
+        </init-param>
+    </servlet-mapping>
     <session-config>
         <session-timeout>
             30
