@@ -12,12 +12,12 @@ public class Capabilities {
 
     private String name;
     private String id;
-    private Long date;
+    private java.sql.Date date;
     private String userUpload;
     private String comments;
 
 
-    public Capabilities( String name, String id, Long date, String userUpload, String comments ){
+    public Capabilities( String name, String id, java.sql.Date date, String userUpload, String comments ){
         this.name = name;
         this.id = id;
         this.date = date;
@@ -31,7 +31,7 @@ public class Capabilities {
     public String getId(){
         return id;
     }
-    public Long getDate(){
+    public java.sql.Date getDate(){
         return date;
     }
 
@@ -48,7 +48,7 @@ public class Capabilities {
     public void setId( String id ){
         this.id = id;
     }
-    public void setDate( Long date ){
+    public void setDate( java.sql.Date date ){
         this.date = date;
     }
 

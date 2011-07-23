@@ -12,6 +12,7 @@
 
 <%@page language="java" import="java.util.*" %>
 <%@page errorPage="error.jsp" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
 <html>
     <div class="container">
@@ -21,6 +22,9 @@
     </head>
 
       <body>
+
+       
+
              <c:if test="${validUser == null}" >
               <jsp:forward page="login.jsp">
                   <jsp:param name="origURL" value="${pageContext.request.requestURL}" />
@@ -29,19 +33,20 @@
 
           </c:if>
          
-          
+             
+
         <div id="main" class="round" >
             <p> Upload Capabilities </p>
-            <form method="post" action="UploadData" name="upload" enctype="multipart/form-data" class="formUser" >
+            <form method="post" action="UploadData" name="upload" enctype="multipart/form-data" class="formUser"  >
                 <ul>
-                    <li> <label> Name </label> <input type="text" name="nameCap" /> </li>
-                    <li> <label> Description </label> <textarea cols="40" rows="5" name="comments"> </textarea> </li>
-                    <li> <label> Select a file to upload (Max size: 10MB)</label> <input type="file" name="uploadfile" /> </li>
-                    <li> <input type="hidden" name="todo" value="upload" /> </li
+                    <li> <label> Name </label> <input type="text"  name="nameCap" /> </li>
+                    <li> <label> Description </label> <textarea cols="40" rows="5"  name="comments"> </textarea> </li>
+                    <li> <label> Select a file to upload (Max size: 10MB)</label> <input type="file" name="uploadfile"  /> </li>
+                    <li> <input type="hidden" name="todo" value="upload" /> </li>
                     <li> <input type="submit" value="Upload" /> </li>
                 </ul>
             </form>
-
+            
 </div>
           <%@include file="/WEB-INF/jspf/footer.jspf" %>
     </body>

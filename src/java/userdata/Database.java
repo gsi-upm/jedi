@@ -6,14 +6,12 @@
 package userdata;
 
 import java.sql.*;
-import java.util.Date;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.io.IOException;
 import javax.servlet.RequestDispatcher;
@@ -77,24 +75,22 @@ protected void doPost(HttpServletRequest request, HttpServletResponse response) 
         }
         if (action.equals("saveData")) {
             PreparedStatement smt;
-            LOGGER.severe("Action: save data");
-            
+            LOGGER.severe("Action: save data");            
             try {
                 
                 HttpSession session = request.getSession(true);
-                Capabilities cap = (Capabilities) session.getAttribute("capabilitie");
+                Capabilities cap = (Capabilities) session.getAttribute("capabilitie");               
                 
-                
-                String name = cap.getName();
-                LOGGER.severe(name);
+                String name = cap.getName();               
                 String id = cap.getId();
-                Long date = cap.getDate();
+                java.sql.Date date = cap.getDate();
                 String userUpload = cap.getUserUpload();
                 String comments = cap.getComments();
                 
-                smt = connection.prepareStatement("INSERT INTO capabilities (USER,ID,DATE,USERUPLOAD, COMMENTS) VALUES(?,?,?,?,?)");
+                
+                smt = connection.prepareStatement("INSERT INTO capabilities (NAME,DATEUPLOAD,ID,USERUPLOAD, COMMENTS) VALUES(?,?,?,?,?)");
                 smt.setString(1, name);
-                smt.setLong(2,date);
+                smt.setDate(2,date);
                 smt.setString(3, id);
                 smt.setString(4,userUpload);
                 smt.setString(5, comments);

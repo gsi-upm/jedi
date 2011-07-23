@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
+import java.util.logging.Logger;
 
 
 import javax.servlet.ServletConfig;
@@ -28,8 +29,12 @@ import java.util.Date;
 import com.ice.tar.TarArchive;
 import javax.servlet.http.HttpSession;
 
+import javax.xml.parsers.*;
+import org.w3c.dom.*;
+
 public class UploadData extends HttpServlet {
 
+    private static final Logger LOGGER = Logger.getLogger(Database.class.getName());
     private static final String TMP_DIR_PATH = "/tmp";
     private File tmpDir;
     private static final String DESTINATION_DIR_PATH = "/files";
@@ -70,20 +75,36 @@ public class UploadData extends HttpServlet {
                     UploadData u = new UploadData();
                     u.unTarGz(fileTwo, folderFile);
 
+                    //
+                    infoCapabilitie(file);
+
+                    //Takes info from the user
                     HttpSession session = request.getSession(true);
                     User user = (User) session.getValue("validUser");
 
                     String userName = user.getUser();
                     Date date = new Date();
-                    Long actualDate = date.getTime();
 
+                    java.sql.Date actualDate = new java.sql.Date(date.getTime());
+                    //Form info
                     String comments = request.getParameter("comments");
-                    String nameCap = request.getParameter("nameCap");
+                //    String nameCap = request.getParameter("nameCap");
+              //      String nameCap = infoCapabilitie(fileTwo);
+                  //  System.out.println("Nombre: " + nameCap);
 
+
+
+                    //Random ID for each capabilitie uploaded
                     Random r = new Random();
-                    int id = r.nextInt();
+                    double tempInt = r.nextDouble();
+                    tempInt = tempInt * 100000;
+                    tempInt = Math.round(tempInt);
+                    String id = String.valueOf((int) tempInt);
 
-                    Capabilities c = new Capabilities( nameCap, String.valueOf(id), actualDate, userName,  comments );
+
+
+
+                    Capabilities c = new Capabilities(nameCap, id, actualDate, userName, comments);
                     RequestDispatcher dispatcher = request.getRequestDispatcher("Database" + "?" + "action" + "=" + "saveData");
                     request.getSession().setAttribute("capabilitie", c);
                     dispatcher.forward(request, response);
@@ -125,5 +146,67 @@ public class UploadData extends HttpServlet {
         tarArchive.extractContents(new File(unZipPath));
         tarArchive.closeArchive();
         new File(tempPath).delete();
+
+    }
+
+    /**
+     * Get information from capabilities files.
+     * TODO: Use this to get for information than only the name
+     * @param file
+     * @return
+     * @throws java.io.IOException
+     * @throws java.lang.Exception
+     */
+    private void infoCapabilitie(File file) throws java.io.IOException, java.lang.Exception {
+        try {
+            
+            if (file.isFile()) {
+                String filePath = file.getCanonicalPath();
+                if (filePath.endsWith(".xml")) {
+                  String nameCap =  getNameCap(file);               
+                }
+            } else if (file.isDirectory()) {
+                String[] fileName = file.list();
+                if (fileName != null) {                
+                for (int i = 0; i < fileName.length; i++) {
+                    File item = new File(file.getPath(), fileName[i]);
+                    infoCapabilitie(item);
+                }
+            }          
+        }
+         
+          
+        }
+
+        catch (java.io.IOException ex) {
+            System.out.println("Exception: " + ex.getMessage());
+        } catch (java.lang.Exception ex) {
+            System.out.println("Exception: " + ex.getMessage());
+        }
+        
+        
+    }
+
+    private String getNameCap(File file) throws Exception {
+        try {
+            DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder builder = builderFactory.newDocumentBuilder();
+            Document document = builder.parse(file);
+            document.getDocumentElement().normalize();
+            Element rootElement = document.getDocumentElement();
+            String capabilityName = rootElement.getAttribute("name");
+            return capabilityName;
+            
+        } catch (Exception ex) {
+            System.out.println("Exception: " + ex.getMessage());
+            return(ex.getMessage());
+        }
+          
+    }
+
+    private void getInfoCap(){
+        
     }
 }
+
+
