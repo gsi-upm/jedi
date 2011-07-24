@@ -56,6 +56,9 @@ public class UploadData extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String fileSelected = request.getParameter("uploadfile");
+        LOGGER.severe("File selected: " + fileSelected);
+
         DiskFileItemFactory fileItemFactory = new DiskFileItemFactory();
         fileItemFactory.setSizeThreshold(10 * 1024 * 1024); //10 MB
         fileItemFactory.setRepository(tmpDir);
@@ -75,37 +78,26 @@ public class UploadData extends HttpServlet {
                     UploadData u = new UploadData();
                     u.unTarGz(fileTwo, folderFile);
 
-                    //
-                    infoCapabilitie(file);
-
                     //Takes info from the user
                     HttpSession session = request.getSession(true);
                     User user = (User) session.getValue("validUser");
 
                     String userName = user.getUser();
                     Date date = new Date();
-
                     java.sql.Date actualDate = new java.sql.Date(date.getTime());
                     //Form info
+                    String nameCapUser = request.getParameter("nameCap");
                     String comments = request.getParameter("comments");
-                //    String nameCap = request.getParameter("nameCap");
-              //      String nameCap = infoCapabilitie(fileTwo);
-                  //  System.out.println("Nombre: " + nameCap);
+                   // System.out.println("Comentarios: " + comments);
+                    //NULL siempre...¿Por que?
 
 
-
-                    //Random ID for each capabilitie uploaded
-                    Random r = new Random();
-                    double tempInt = r.nextDouble();
-                    tempInt = tempInt * 100000;
-                    tempInt = Math.round(tempInt);
-                    String id = String.valueOf((int) tempInt);
-
-
-
-
-                    Capabilities c = new Capabilities(nameCap, id, actualDate, userName, comments);
+                    Capabilities c = new Capabilities("", "", actualDate, userName, comments);
+                    //Takes the name of the capabilitiy
+                    infoCapabilitie(file, c);
+                    
                     RequestDispatcher dispatcher = request.getRequestDispatcher("Database" + "?" + "action" + "=" + "saveData");
+                 
                     request.getSession().setAttribute("capabilitie", c);
                     dispatcher.forward(request, response);
                 }
@@ -157,23 +149,27 @@ public class UploadData extends HttpServlet {
      * @throws java.io.IOException
      * @throws java.lang.Exception
      */
-    private void infoCapabilitie(File file) throws java.io.IOException, java.lang.Exception {
+    private void infoCapabilitie(File file, Capabilities cap) throws java.io.IOException, java.lang.Exception {
         try {
             
             if (file.isFile()) {
                 String filePath = file.getCanonicalPath();
                 if (filePath.endsWith(".xml")) {
-                  String nameCap =  getNameCap(file);               
+                  String nameCap =  getNameCap(file);
+                  cap.setName(nameCap);
+                  System.out.println("Name changed: " + nameCap);
+
                 }
             } else if (file.isDirectory()) {
                 String[] fileName = file.list();
                 if (fileName != null) {                
                 for (int i = 0; i < fileName.length; i++) {
                     File item = new File(file.getPath(), fileName[i]);
-                    infoCapabilitie(item);
+                    infoCapabilitie(item,cap);
                 }
             }          
         }
+            
          
           
         }
@@ -182,6 +178,7 @@ public class UploadData extends HttpServlet {
             System.out.println("Exception: " + ex.getMessage());
         } catch (java.lang.Exception ex) {
             System.out.println("Exception: " + ex.getMessage());
+            
         }
         
         
@@ -204,9 +201,7 @@ public class UploadData extends HttpServlet {
           
     }
 
-    private void getInfoCap(){
-        
-    }
+   
 }
 
 
