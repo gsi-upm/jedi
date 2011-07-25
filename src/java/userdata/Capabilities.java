@@ -2,7 +2,8 @@
 
 package userdata;
 
-import java.util.Date;
+import java.util.List;
+import java.io.File;
 
 /**
  *
@@ -12,17 +13,20 @@ public class Capabilities {
 
     private String name;
     private String id;
-    private java.sql.Date date;
+    private java.sql.Date dateUpload;
+    private String timeUpload;
     private String userUpload;
     private String comments;
+    private List <File> listFile;
 
 
-    public Capabilities( String name, String id, java.sql.Date date, String userUpload, String comments ){
+    public Capabilities( String name, String id, java.sql.Date date, String timeUpload, String userUpload, String comments, List <File> listFile ){
         this.name = name;
         this.id = id;
-        this.date = date;
+        this.dateUpload = date;
         this.userUpload = userUpload;
         this.comments = comments;
+        this.listFile = listFile;
     }
     
     public String getName(){
@@ -32,7 +36,10 @@ public class Capabilities {
         return id;
     }
     public java.sql.Date getDate(){
-        return date;
+        return dateUpload;
+    }
+    public String getTimeUpload(){
+        return timeUpload;
     }
 
     public String getComments(){
@@ -42,6 +49,10 @@ public class Capabilities {
         return userUpload;
     }
 
+    public List <File> getListFile(){
+        return listFile;
+    }
+
     public void setName( String name ){
         this.name = name;
     }
@@ -49,7 +60,10 @@ public class Capabilities {
         this.id = id;
     }
     public void setDate( java.sql.Date date ){
-        this.date = date;
+        this.dateUpload = date;
+    }
+    public void setTimeUpload( String timeUpload ){
+        this.timeUpload = timeUpload;
     }
 
     public void setComments( String comments ){
@@ -58,6 +72,13 @@ public class Capabilities {
     public void setUserUpload( String userUpload ){
         this.userUpload = userUpload;
     }
-    
+
+    public void setListFile( List <File> listFile ){
+        this.listFile = listFile;
+    }
+
+    public void addListFile( File file ){
+        listFile.add(file);
+    }
 
 }

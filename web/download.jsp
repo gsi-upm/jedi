@@ -12,6 +12,8 @@
 <%@ taglib prefix="sql" uri="http://java.sun.com/jsp/jstl/sql" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
+
+
 <html>
     <div class="container">
         <head>
@@ -29,26 +31,30 @@
             </c:if>
             <div id="main" class="round">
 
+                
 
                 <div id="capabilities">
                     <div class="capName">
                         <p class="titleBlock"> Name </p>
                         <c:choose>
                             <c:when test="${resCapabilities.rowCount eq 0}">
-                                <select name="capList">
+                                <select name="capList" " size="4">
                                     No capabilities
                                 </select>
                             </c:when>
-                            <c:otherwise>                               
-                                      <select name="capList" multiple>
+                            <c:otherwise>
+                                <form name="formCap" method="post" action="#">
+                                      <select name="capListName" multiple class="selectForm">
                                         <c:forEach var="capability" items="${resCapabilities.rows}">
                                             <option> ${capability.name} </option>
                                         </c:forEach>
                                     </select>
-                                <div class="capInfo">
-                                    
-
-                                </div>
+                                    <select name="capsSelected" multiple size="4" class="selectForm">
+                                        <option> Add capabilities </option>
+                                    </select>
+                                      <input type="button" value="Add to list" onClick="addSelect( formCap.capListName.options[formCap.capListName.selectedIndex].value )" />
+                                      <input type="submit" value="Download selected" />
+                                </form>
                             </c:otherwise>
                         </c:choose>
                     </div>
@@ -57,4 +63,14 @@
             <%@include file="/WEB-INF/jspf/footer.jspf" %>
         </body>
     </div>
+
+
+        <script language="javascript" type="text/javascript">
+            function addSelect(  text ){
+                var option1 = new Option(text,"textOption","","");
+                var select = document.formCap.capsSelected;
+                select.appendChild(option1);
+            }
+               
+        </script>
 </html>

@@ -20,6 +20,7 @@ import javax.servlet.jsp.jstl.sql.ResultSupport;
 
 import java.util.Random;
 
+
 /**
  *
  * @author nachomv
@@ -88,6 +89,7 @@ public class Database extends HttpServlet {
 
                 String name = cap.getName();
                 java.sql.Date date = cap.getDate();
+                String timeUpload = cap.getTimeUpload();
                 String userUpload = cap.getUserUpload();
                 String comments = cap.getComments();
                 String id = id();
@@ -96,14 +98,21 @@ public class Database extends HttpServlet {
                 //Statement sm = connection.createStatement();
                // ResultSet resultSet = sm.executeQuery("SELECT * FROM capabilities where name ="+name);
                 //LOGGER.info("There is already a capability with this name, it will be saved with a new one");
-                
 
-                smt = connection.prepareStatement("INSERT INTO capabilities (NAME,DATEUPLOAD,ID,USERUPLOAD, COMMENTS) VALUES(?,?,?,?,?)");
+                String javaFiles = "";
+                for(int i=0;i<cap.getListFile().size();i++){
+                    javaFiles = javaFiles + cap.getListFile().get(i).getName();
+                    
+                }
+
+                smt = connection.prepareStatement("INSERT INTO capabilities (NAME,DATEUPLOAD,TIMEUPLOAD, ID,USERUPLOAD, COMMENTS, JAVAFILES) VALUES(?,?,?,?,?,?,?)");
                 smt.setString(1, name);
                 smt.setDate(2, date);
-                smt.setString(3, id);
-                smt.setString(4, userUpload);
-                smt.setString(5, comments);
+                smt.setString(3, timeUpload);
+                smt.setString(4, id);
+                smt.setString(5, userUpload);
+                smt.setString(6, comments);
+                smt.setString(7, javaFiles);
                 smt.executeUpdate();
 
                 RequestDispatcher dispatcher = request.getRequestDispatcher("uploadCorrect.jsp");

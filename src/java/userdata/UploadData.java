@@ -4,8 +4,9 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Random;
+import java.util.ArrayList;
 import java.util.logging.Logger;
+
 
 
 import javax.servlet.ServletConfig;
@@ -27,7 +28,9 @@ import java.io.FileOutputStream;
 import java.io.OutputStream;
 import java.util.Date;
 import com.ice.tar.TarArchive;
+import java.util.Calendar;
 import javax.servlet.http.HttpSession;
+
 
 import javax.xml.parsers.*;
 import org.w3c.dom.*;
@@ -85,15 +88,23 @@ public class UploadData extends HttpServlet {
                     String userName = user.getUser();
                     Date date = new Date();
                     java.sql.Date actualDate = new java.sql.Date(date.getTime());
+
+                    Calendar calendar = Calendar.getInstance();
+                    int hour = calendar.get(Calendar.HOUR_OF_DAY);
+                    int minutes = calendar.get(Calendar.MINUTE);
+                    int seconds = calendar.get(Calendar.SECOND);
+                    String timeUpload = String.valueOf(hour) + ':' + String.valueOf(minutes) + ':' + String.valueOf(seconds);
+
                     //Form info
                     String nameCapUser = request.getParameter("nameCap");
                     String comments = request.getParameter("comments");
                    // System.out.println("Comentarios: " + comments);
                     //NULL siempre...¿Por que?
 
-
-                    Capabilities c = new Capabilities("", "", actualDate, userName, comments);
-                    //Takes the name of the capabilitiy
+                    List <File> listFiles = new ArrayList <File>();
+                    Capabilities c = new Capabilities("", "", actualDate, "", userName, comments, listFiles);
+                    c.setTimeUpload(timeUpload);
+                    //Takes the name of the capabilitiy and java files assciated
                     infoCapabilitie(file, c);
                     
                     RequestDispatcher dispatcher = request.getRequestDispatcher("Database" + "?" + "action" + "=" + "saveData");
@@ -158,7 +169,9 @@ public class UploadData extends HttpServlet {
                   String nameCap =  getNameCap(file);
                   cap.setName(nameCap);
                   System.out.println("Name changed: " + nameCap);
-
+                }
+                else if( filePath.endsWith(".java")){
+                    cap.addListFile(file);
                 }
             } else if (file.isDirectory()) {
                 String[] fileName = file.list();
