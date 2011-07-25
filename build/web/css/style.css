@@ -40,7 +40,9 @@
 }
 
 .selectForm{
-    width: 400px;
+    width: 200px;
+    background-color: white;
+
     }
 
 /* footer */
@@ -167,7 +169,7 @@ label{
     border-radius:      5px;
 }
 
-.formUser input[type="submit"]{
+.formUser input[type="submit"], .formUser input[type="button"]{
     background-color: #0082A3;
     color: #D7EAEF;
     width: 100px;
@@ -175,7 +177,23 @@ label{
     -moz-border-radius:   20px;
     -webkit-border-radius: 20px;
     border-radius:      20px;
-    margin-top: 10px;
+    margin-top: 20px;
+}
+
+.formUser select{
+    border-width:2px;
+    border-style: solid;
+    border-color: #2345A3;
+    margin-top:20px;
+}
+
+#select option{
+    margin-bottom:40px;
+    margin-left:20px;
+    
+}
+.titleSelect{
+    float:right;
 }
 
 /* Navigation */

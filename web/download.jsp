@@ -30,21 +30,20 @@
 
             </c:if>
             <div id="main" class="round">
-
-                
-
                 <div id="capabilities">
                     <div class="capName">
-                        <p class="titleBlock"> Name </p>
                         <c:choose>
                             <c:when test="${resCapabilities.rowCount eq 0}">
-                                <select name="capList" " size="4">
+                                <select name="capList" size="4">
                                     No capabilities
                                 </select>
                             </c:when>
                             <c:otherwise>
-                                <form name="formCap" method="post" action="#">
-                                      <select name="capListName" multiple class="selectForm">
+                                <form name="formCap" method="post" action="#" class="formUser">
+                                     
+                                      <div id="selectOption">
+                                        
+                                       <select name="capListName" multiple class="selectForm" size="4" >
                                         <c:forEach var="capability" items="${resCapabilities.rows}">
                                             <option> ${capability.name} </option>
                                         </c:forEach>
@@ -52,8 +51,9 @@
                                     <select name="capsSelected" multiple size="4" class="selectForm">
                                         <option> Add capabilities </option>
                                     </select>
+                                      </div>
                                       <input type="button" value="Add to list" onClick="addSelect( formCap.capListName.options[formCap.capListName.selectedIndex].value )" />
-                                      <input type="submit" value="Download selected" />
+                                      <input type="submit" value="Download" />
                                 </form>
                             </c:otherwise>
                         </c:choose>
