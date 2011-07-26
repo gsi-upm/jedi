@@ -4,6 +4,7 @@ package userdata;
 
 import java.util.List;
 import java.io.File;
+import java.util.ArrayList;
 
 /**
  *
@@ -19,7 +20,14 @@ public class Capabilities {
     private String comments;
     private List <File> listFile;
 
-
+    public Capabilities(){
+        this.name = "";
+        this.id = "";
+        this.dateUpload = new java.sql.Date(0);
+        this.userUpload = "";
+        this.comments = "";
+        this.listFile = new ArrayList<File>();
+    }
     public Capabilities( String name, String id, java.sql.Date date, String timeUpload, String userUpload, String comments, List <File> listFile ){
         this.name = name;
         this.id = id;

@@ -75,7 +75,7 @@ public class UploadData extends HttpServlet {
         }
     }
 
-    private void helpGetPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, javazoom.upload.UploadException {
+    private void helpGetPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         response.setContentType("text/html");
         boolean isMultiPart = ServletFileUpload.isMultipartContent(request);
         if (isMultiPart) {
@@ -89,52 +89,60 @@ public class UploadData extends HttpServlet {
             fileItemFactory.setRepository(tmpDir);
             ServletFileUpload uploadHandler = new ServletFileUpload(fileItemFactory);
             try {
-                Capabilities c = new Capabilities("", "", null, "", "", "", null);
+                Capabilities c = new Capabilities();
                 List items = uploadHandler.parseRequest(request);
                 Iterator itr = items.iterator();
                 while (itr.hasNext()) {
                     FileItem item = (FileItem) itr.next();
                     if (!item.isFormField()) {
-                        //Creates a folder and decompress the tar.gz file
-                        File file = new File(destinationDir, item.getName());
-                        file.mkdir();
-                        String folderFile = getServletContext().getRealPath(DESTINATION_DIR_PATH + File.separator + item.getName());
-                        File fileTwo = new File(folderFile, item.getName());
-                        item.write(fileTwo);
-                        UploadData u = new UploadData();
-                        u.unTarGz(fileTwo, folderFile);
+                        //LOGGER.severe(item.getName());
+                        if (!item.getName().equals("")) {
+                            //Creates a folder and decompress the tar.gz file
+                            File file = new File(destinationDir, item.getName());
+                            file.mkdir();
+                            String folderFile = getServletContext().getRealPath(DESTINATION_DIR_PATH + File.separator + item.getName());
+                            File fileTwo = new File(folderFile, item.getName());
+                            item.write(fileTwo);
+                            UploadData u = new UploadData();
+                            u.unTarGz(fileTwo, folderFile);
 
-                        //Takes info from the user
-                        HttpSession session = request.getSession(true);
-                        User user = (User) session.getValue("validUser");
+                            //Takes info from the user
+                            HttpSession session = request.getSession(true);
+                            User user = (User) session.getValue("validUser");
 
-                        String userName = user.getUser();
-                        Date date = new Date();
-                        java.sql.Date actualDate = new java.sql.Date(date.getTime());
+                            String userName = user.getUser();
+                            Date date = new Date();
+                            java.sql.Date actualDate = new java.sql.Date(date.getTime());
 
-                        //Time of upload
-                        Calendar calendar = Calendar.getInstance();
-                        int hour = calendar.get(Calendar.HOUR_OF_DAY);
-                        int minutes = calendar.get(Calendar.MINUTE);
-                        int seconds = calendar.get(Calendar.SECOND);
-                        String timeUpload = String.valueOf(hour) + ':' + String.valueOf(minutes) + ':' + String.valueOf(seconds);
+                            //Time of upload
+                            Calendar calendar = Calendar.getInstance();
+                            int hour = calendar.get(Calendar.HOUR_OF_DAY);
+                            int minutes = calendar.get(Calendar.MINUTE);
+                            int seconds = calendar.get(Calendar.SECOND);
+                            String timeUpload = String.valueOf(hour) + ':' + String.valueOf(minutes) + ':' + String.valueOf(seconds);
 
-                        //Form info
-                        List<File> listFiles = new ArrayList<File>();
-                        c.setDate(actualDate);
-                        c.setTimeUpload(timeUpload);
-                        c.setListFile(listFiles);
-                        c.setUserUpload(userName);
-                        
-                        //Takes the name of the capabilitiy and java files assciated
-                        infoCapabilitie(file, c);
+                            //Form info
+                            List<File> listFiles = new ArrayList<File>();
+                            c.setDate(actualDate);
+                            c.setTimeUpload(timeUpload);
+                            c.setListFile(listFiles);
+                            c.setUserUpload(userName);
 
-                        RequestDispatcher dispatcher = request.getRequestDispatcher("Database" + "?" + "action" + "=" + "saveData");
+                            //Takes the name of the capabilitiy and java files assciated
+                            infoCapabilitie(file, c);
 
-                        LOGGER.severe("Redirecting");
-                        request.getSession().setAttribute("capabilitie", c);
-                        dispatcher.forward(request, response);
+                            RequestDispatcher dispatcher = request.getRequestDispatcher("Database" + "?" + "action" + "=" + "saveData");
+                            LOGGER.severe("Redirecting");
+                            request.getSession().setAttribute("messageError", "");
+                            request.getSession().setAttribute("capabilitie", c);
+                            dispatcher.forward(request, response);
+                        } else {
+                            RequestDispatcher dispatcher = request.getRequestDispatcher("Database" + "?" + "action" + "=" + "emptyFile");
+                            LOGGER.severe("Redirecting");
+                            request.getSession().setAttribute("capabilitie", c);
+                            dispatcher.forward(request, response);
 
+                        }
                     } else {
                         String name = item.getFieldName();
                         String value = item.getString();
@@ -146,17 +154,17 @@ public class UploadData extends HttpServlet {
                             c.setName(name);
                         } else if (name.equals("uploadfile")) {
                             fileSelected = value;
+                            LOGGER.severe("FileUpload: " + fileSelected);
 
                         }
 
                     }
 
+
                 }
 
 
             } catch (FileUploadException ex) {
-                System.out.println("Exception: " + ex.getMessage());
-            } catch (javazoom.upload.UploadException ex) {
                 System.out.println("Exception: " + ex.getMessage());
             } catch (Exception ex) {
                 System.out.println("Exception: " + ex.getMessage());
@@ -237,10 +245,14 @@ public class UploadData extends HttpServlet {
             System.out.println("Exception: " + ex.getMessage());
 
         }
-
-
     }
 
+    /**
+     * getNameCap: Looks for the name parameter in the XML file
+     * @param file
+     * @return
+     * @throws Exception
+     */
     private String getNameCap(File file) throws Exception {
         try {
             DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();

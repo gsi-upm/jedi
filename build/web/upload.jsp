@@ -23,8 +23,8 @@
 
         <body>
 
-
-
+            
+        
             <c:if test="${validUser == null}" >
                 <jsp:forward page="login.jsp">
                     <jsp:param name="origURL" value="${pageContext.request.requestURL}" />
@@ -37,11 +37,14 @@
 
             <div id="main" class="round" >
                 <p class="titleBlock"> Upload Capabilities </p>
+                <div class="messageError">
+                <p> ${messageError} </p>
+                </div>
                 <form method="post" action="UploadData"  enctype="multipart/form-data" class="formUser"  >
                 <ul>
                     <li> <label> Name </label> <input type="text"  id="nameCap" name="nameCap" /> </li>
                     <li> <label> Description </label> <textarea cols="40" rows="5" id="comments" name="comments"> </textarea> </li>
-                    <li> <label> Select a file to upload (Max size: 10MB)</label> <input type="file" id="uploadfile"name="uploadfile"  /> </li>
+                    <li> <label> Select a file to upload (Max size: 10MB)</label> <input type="file" id="uploadfile" name="uploadfile"  /> </li>
                     <li> <input type="hidden" name="todo" value="upload" /> </li>
                     <li> <input type="submit" value="Upload" /> </li>
                 </ul>

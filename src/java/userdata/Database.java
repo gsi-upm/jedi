@@ -101,7 +101,7 @@ public class Database extends HttpServlet {
 
                 String javaFiles = "";
                 for(int i=0;i<cap.getListFile().size();i++){
-                    javaFiles = javaFiles + cap.getListFile().get(i).getName();
+                    javaFiles = javaFiles +  cap.getListFile().get(i).getName() + ';';
                     
                 }
 
@@ -124,6 +124,11 @@ public class Database extends HttpServlet {
                 Result result = ResultSupport.toResult(resultSet);
                 request.setAttribute("resCapabilities", result);
                 RequestDispatcher dispatcher = request.getRequestDispatcher("download.jsp");
+                dispatcher.forward(request, response);
+            }
+            else if(action.equals("emptyFile")){
+                request.getSession().setAttribute("messageError", "Please, write a name and select a file");
+                RequestDispatcher dispatcher = request.getRequestDispatcher("upload.jsp");
                 dispatcher.forward(request, response);
             }
         } catch (SQLException ex) {
