@@ -114,6 +114,7 @@ public class Database extends HttpServlet {
                 smt.setString(6, comments);
                 smt.setString(7, javaFiles);
                 smt.executeUpdate();
+                LOGGER.severe("Data saved");
 
                 RequestDispatcher dispatcher = request.getRequestDispatcher("uploadCorrect.jsp");
                 dispatcher.forward(request, response);

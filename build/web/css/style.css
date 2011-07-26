@@ -22,16 +22,12 @@
     text-align:center;
 }
 
-
-
 /* main */
 
 #main{
     margin-top: 10px;
     padding:10px;
     background: #fff;
-    float:center;
-
 }
 
 .titleBlock{
@@ -185,6 +181,7 @@ label{
     border-style: solid;
     border-color: #2345A3;
     margin-top:20px;
+    width:200px;
 }
 
 #select option{

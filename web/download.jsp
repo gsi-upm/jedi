@@ -42,14 +42,15 @@
                                 <form name="formCap" method="post" action="#" class="formUser">
                                      
                                       <div id="selectOption">
-                                        
+                                          <p> Capabilities </p>
                                        <select name="capListName" multiple class="selectForm" size="4" >
                                         <c:forEach var="capability" items="${resCapabilities.rows}">
                                             <option> ${capability.name} </option>
                                         </c:forEach>
                                     </select>
+                                          <p> Download </p>
                                     <select name="capsSelected" multiple size="4" class="selectForm">
-                                        <option> Add capabilities </option>
+                                      
                                     </select>
                                       </div>
                                       <input type="button" value="Add to list" onClick="addSelect( formCap.capListName.options[formCap.capListName.selectedIndex].value )" />

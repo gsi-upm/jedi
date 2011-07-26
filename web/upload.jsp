@@ -5,7 +5,7 @@
 --%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
-   "http://www.w3.org/TR/html4/loose.dtd">
+    "http://www.w3.org/TR/html4/loose.dtd">
 
 
 
@@ -16,28 +16,28 @@
 
 <html>
     <div class="container">
-    <head>
-       <%@include file="/WEB-INF/jspf/header.jspf" %>
-        <link href="css/style.css" rel="stylesheet" type="text/css" media="screen" />
-    </head>
+        <head>
+            <%@include file="/WEB-INF/jspf/header.jspf" %>
+            <link href="css/style.css" rel="stylesheet" type="text/css" media="screen" />
+        </head>
 
-      <body>
+        <body>
 
-       
 
-             <c:if test="${validUser == null}" >
-              <jsp:forward page="login.jsp">
-                  <jsp:param name="origURL" value="${pageContext.request.requestURL}" />
-                  <jsp:param name="messageError" value="Please log in first" />
-              </jsp:forward>
 
-          </c:if>
-         
-             
+            <c:if test="${validUser == null}" >
+                <jsp:forward page="login.jsp">
+                    <jsp:param name="origURL" value="${pageContext.request.requestURL}" />
+                    <jsp:param name="messageError" value="Please log in first" />
+                </jsp:forward>
 
-        <div id="main" class="round" >
-            <p class="titleBlock"> Upload Capabilities </p>
-            <form method="post" action="UploadData"  enctype="multipart/form-data" class="formUser"  >
+            </c:if>
+
+
+
+            <div id="main" class="round" >
+                <p class="titleBlock"> Upload Capabilities </p>
+                <form method="post" action="UploadData"  enctype="multipart/form-data" class="formUser"  >
                 <ul>
                     <li> <label> Name </label> <input type="text"  id="nameCap" name="nameCap" /> </li>
                     <li> <label> Description </label> <textarea cols="40" rows="5" id="comments" name="comments"> </textarea> </li>
@@ -46,9 +46,8 @@
                     <li> <input type="submit" value="Upload" /> </li>
                 </ul>
             </form>
-            
-</div>
-          <%@include file="/WEB-INF/jspf/footer.jspf" %>
-    </body>
+            </div>
+            <%@include file="/WEB-INF/jspf/footer.jspf" %>
+        </body>
     </div>
 </html>

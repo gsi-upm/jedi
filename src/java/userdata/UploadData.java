@@ -30,10 +30,13 @@ import java.util.Date;
 import com.ice.tar.TarArchive;
 import java.util.Calendar;
 import javax.servlet.http.HttpSession;
-
+import javazoom.upload.MultipartFormDataRequest;
 
 import javax.xml.parsers.*;
 import org.w3c.dom.*;
+import java.util.*;
+
+import com.oreilly.servlet.MultipartRequest;
 
 public class UploadData extends HttpServlet {
 
@@ -57,21 +60,63 @@ public class UploadData extends HttpServlet {
         }
     }
 
-    @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String fileSelected = request.getParameter("uploadfile");
-        LOGGER.severe("File selected: " + fileSelected);
+    
+    
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
+    try{
+        helpGetPost(request, response);
+    }
+    catch(Exception ex){
+        System.out.println("Exception: " + ex.getMessage());
+    }
+    }
 
+    
+    
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
+      try{
+        helpGetPost(request, response);
+      }
+      catch(Exception ex){
+          System.out.println("Exception: " + ex.getMessage());
+      }
+    }
+
+    private void helpGetPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, javazoom.upload.UploadException {
+      //  String fileSelected = "";
+       // String comments = "";
+       //String nameCap = "";
+
+
+        response.setContentType("text/html");
+        boolean isMultiPart = ServletFileUpload.isMultipartContent(request);
+        if(isMultiPart){
+      /*  MultipartFormDataRequest mRequest = new MultipartFormDataRequest(request);
+        String fileSelected = mRequest.getParameter("uploadfile");
+        String comments = mRequest.getParameter("comments");
+        String nameCap = mRequest.getParameter("nameCap");
+        LOGGER.severe("Comments: " + comments);
+        LOGGER.severe("File selected: " + fileSelected);
+        LOGGER.severe("Name: " + nameCap);*/
+
+    
+        
         DiskFileItemFactory fileItemFactory = new DiskFileItemFactory();
         fileItemFactory.setSizeThreshold(10 * 1024 * 1024); //10 MB
         fileItemFactory.setRepository(tmpDir);
         ServletFileUpload uploadHandler = new ServletFileUpload(fileItemFactory);
         try {
+          
             List items = uploadHandler.parseRequest(request);
             Iterator itr = items.iterator();
+
+           
+
             while (itr.hasNext()) {
                 FileItem item = (FileItem) itr.next();
                 if (!item.isFormField()) {
+
+
                     File file = new File(destinationDir, item.getName());
                     file.mkdir();
                     String folderFile = getServletContext().getRealPath(DESTINATION_DIR_PATH + File.separator + item.getName());
@@ -96,29 +141,37 @@ public class UploadData extends HttpServlet {
                     String timeUpload = String.valueOf(hour) + ':' + String.valueOf(minutes) + ':' + String.valueOf(seconds);
 
                     //Form info
-                    String nameCapUser = request.getParameter("nameCap");
-                    String comments = request.getParameter("comments");
-                   // System.out.println("Comentarios: " + comments);
-                    //NULL siempre...¿Por que?
-
-                    List <File> listFiles = new ArrayList <File>();
-                    Capabilities c = new Capabilities("", "", actualDate, "", userName, comments, listFiles);
+                    List<File> listFiles = new ArrayList<File>();
+                    Capabilities c = new Capabilities("aa", "aa", actualDate, "bb", userName, "qqq", listFiles);
                     c.setTimeUpload(timeUpload);
                     //Takes the name of the capabilitiy and java files assciated
                     infoCapabilitie(file, c);
-                    
+
                     RequestDispatcher dispatcher = request.getRequestDispatcher("Database" + "?" + "action" + "=" + "saveData");
-                 
+                   
+                     LOGGER.severe("Redirecting");
                     request.getSession().setAttribute("capabilitie", c);
                     dispatcher.forward(request, response);
+                  
                 }
             }
+
+        
         } catch (FileUploadException ex) {
             System.out.println("Exception: " + ex.getMessage());
-        } catch (Exception ex) {
+        }
+        catch( javazoom.upload.UploadException ex ){
             System.out.println("Exception: " + ex.getMessage());
         }
+                
+        catch (Exception ex) {
+            System.out.println("Exception: " + ex.getMessage());
+        }
+
+        
     }
+    }
+
 
     /**
      * unTarGz: Decompress tar.gz files
@@ -162,39 +215,36 @@ public class UploadData extends HttpServlet {
      */
     private void infoCapabilitie(File file, Capabilities cap) throws java.io.IOException, java.lang.Exception {
         try {
-            
+
             if (file.isFile()) {
                 String filePath = file.getCanonicalPath();
                 if (filePath.endsWith(".xml")) {
-                  String nameCap =  getNameCap(file);
-                  cap.setName(nameCap);
-                  System.out.println("Name changed: " + nameCap);
-                }
-                else if( filePath.endsWith(".java")){
+                    String nameCap = getNameCap(file);
+                    cap.setName(nameCap);
+                    LOGGER.severe("File saved as: " + nameCap);
+                } else if (filePath.endsWith(".java")) {
                     cap.addListFile(file);
                 }
             } else if (file.isDirectory()) {
                 String[] fileName = file.list();
-                if (fileName != null) {                
-                for (int i = 0; i < fileName.length; i++) {
-                    File item = new File(file.getPath(), fileName[i]);
-                    infoCapabilitie(item,cap);
+                if (fileName != null) {
+                    for (int i = 0; i < fileName.length; i++) {
+                        File item = new File(file.getPath(), fileName[i]);
+                        infoCapabilitie(item, cap);
+                    }
                 }
-            }          
-        }
-            
-         
-          
-        }
+            }
 
-        catch (java.io.IOException ex) {
+
+
+        } catch (java.io.IOException ex) {
             System.out.println("Exception: " + ex.getMessage());
         } catch (java.lang.Exception ex) {
             System.out.println("Exception: " + ex.getMessage());
-            
+
         }
-        
-        
+
+
     }
 
     private String getNameCap(File file) throws Exception {
@@ -206,15 +256,13 @@ public class UploadData extends HttpServlet {
             Element rootElement = document.getDocumentElement();
             String capabilityName = rootElement.getAttribute("name");
             return capabilityName;
-            
+
         } catch (Exception ex) {
             System.out.println("Exception: " + ex.getMessage());
-            return(ex.getMessage());
+            return (ex.getMessage());
         }
-          
-    }
 
-   
+    }
 }
 
 
