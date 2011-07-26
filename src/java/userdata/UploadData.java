@@ -26,17 +26,14 @@ import java.util.zip.*;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
-import java.util.Date;
 import com.ice.tar.TarArchive;
-import java.util.Calendar;
 import javax.servlet.http.HttpSession;
-import javazoom.upload.MultipartFormDataRequest;
+
 
 import javax.xml.parsers.*;
 import org.w3c.dom.*;
 import java.util.*;
-
-import com.oreilly.servlet.MultipartRequest;
+import javazoom.upload.MultipartFormDataRequest;
 
 public class UploadData extends HttpServlet {
 
@@ -60,118 +57,115 @@ public class UploadData extends HttpServlet {
         }
     }
 
-    
-    
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
-    try{
-        helpGetPost(request, response);
-    }
-    catch(Exception ex){
-        System.out.println("Exception: " + ex.getMessage());
-    }
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        try {
+            helpGetPost(request, response);
+        } catch (Exception ex) {
+            System.out.println("Exception: " + ex.getMessage());
+        }
     }
 
-    
-    
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
-      try{
-        helpGetPost(request, response);
-      }
-      catch(Exception ex){
-          System.out.println("Exception: " + ex.getMessage());
-      }
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        try {
+            helpGetPost(request, response);
+        } catch (Exception ex) {
+            System.out.println("Exception: " + ex.getMessage());
+        }
     }
 
     private void helpGetPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, javazoom.upload.UploadException {
-      //  String fileSelected = "";
-       // String comments = "";
-       //String nameCap = "";
-
-
         response.setContentType("text/html");
         boolean isMultiPart = ServletFileUpload.isMultipartContent(request);
-        if(isMultiPart){
-      /*  MultipartFormDataRequest mRequest = new MultipartFormDataRequest(request);
-        String fileSelected = mRequest.getParameter("uploadfile");
-        String comments = mRequest.getParameter("comments");
-        String nameCap = mRequest.getParameter("nameCap");
-        LOGGER.severe("Comments: " + comments);
-        LOGGER.severe("File selected: " + fileSelected);
-        LOGGER.severe("Name: " + nameCap);*/
+        if (isMultiPart) {
+            request.setCharacterEncoding("UTF-8");
+            String comments = "";
+            String nameCap = "";
+            String fileSelected = "";
 
-    
-        
-        DiskFileItemFactory fileItemFactory = new DiskFileItemFactory();
-        fileItemFactory.setSizeThreshold(10 * 1024 * 1024); //10 MB
-        fileItemFactory.setRepository(tmpDir);
-        ServletFileUpload uploadHandler = new ServletFileUpload(fileItemFactory);
-        try {
-          
-            List items = uploadHandler.parseRequest(request);
-            Iterator itr = items.iterator();
+            DiskFileItemFactory fileItemFactory = new DiskFileItemFactory();
+            fileItemFactory.setSizeThreshold(10 * 1024 * 1024); //10 MB
+            fileItemFactory.setRepository(tmpDir);
+            ServletFileUpload uploadHandler = new ServletFileUpload(fileItemFactory);
+            try {
+                Capabilities c = new Capabilities("", "", null, "", "", "", null);
+                List items = uploadHandler.parseRequest(request);
+                Iterator itr = items.iterator();
+                while (itr.hasNext()) {
+                    FileItem item = (FileItem) itr.next();
+                    if (!item.isFormField()) {
+                        //Creates a folder and decompress the tar.gz file
+                        File file = new File(destinationDir, item.getName());
+                        file.mkdir();
+                        String folderFile = getServletContext().getRealPath(DESTINATION_DIR_PATH + File.separator + item.getName());
+                        File fileTwo = new File(folderFile, item.getName());
+                        item.write(fileTwo);
+                        UploadData u = new UploadData();
+                        u.unTarGz(fileTwo, folderFile);
 
-           
+                        //Takes info from the user
+                        HttpSession session = request.getSession(true);
+                        User user = (User) session.getValue("validUser");
 
-            while (itr.hasNext()) {
-                FileItem item = (FileItem) itr.next();
-                if (!item.isFormField()) {
+                        String userName = user.getUser();
+                        Date date = new Date();
+                        java.sql.Date actualDate = new java.sql.Date(date.getTime());
 
+                        //Time of upload
+                        Calendar calendar = Calendar.getInstance();
+                        int hour = calendar.get(Calendar.HOUR_OF_DAY);
+                        int minutes = calendar.get(Calendar.MINUTE);
+                        int seconds = calendar.get(Calendar.SECOND);
+                        String timeUpload = String.valueOf(hour) + ':' + String.valueOf(minutes) + ':' + String.valueOf(seconds);
 
-                    File file = new File(destinationDir, item.getName());
-                    file.mkdir();
-                    String folderFile = getServletContext().getRealPath(DESTINATION_DIR_PATH + File.separator + item.getName());
-                    File fileTwo = new File(folderFile, item.getName());
-                    item.write(fileTwo);
+                        //Form info
+                        List<File> listFiles = new ArrayList<File>();
+                        c.setDate(actualDate);
+                        c.setTimeUpload(timeUpload);
+                        c.setListFile(listFiles);
+                        c.setUserUpload(userName);
+                        
+                        //Takes the name of the capabilitiy and java files assciated
+                        infoCapabilitie(file, c);
 
-                    UploadData u = new UploadData();
-                    u.unTarGz(fileTwo, folderFile);
+                        RequestDispatcher dispatcher = request.getRequestDispatcher("Database" + "?" + "action" + "=" + "saveData");
 
-                    //Takes info from the user
-                    HttpSession session = request.getSession(true);
-                    User user = (User) session.getValue("validUser");
+                        LOGGER.severe("Redirecting");
+                        request.getSession().setAttribute("capabilitie", c);
+                        dispatcher.forward(request, response);
 
-                    String userName = user.getUser();
-                    Date date = new Date();
-                    java.sql.Date actualDate = new java.sql.Date(date.getTime());
+                    } else {
+                        String name = item.getFieldName();
+                        String value = item.getString();
+                        if (name.equals("comments")) {
+                            comments = value;
+                            c.setComments(comments);
+                        } else if (name.equals("nameCap")) {
+                            nameCap = value;
+                            c.setName(name);
+                        } else if (name.equals("uploadfile")) {
+                            fileSelected = value;
 
-                    Calendar calendar = Calendar.getInstance();
-                    int hour = calendar.get(Calendar.HOUR_OF_DAY);
-                    int minutes = calendar.get(Calendar.MINUTE);
-                    int seconds = calendar.get(Calendar.SECOND);
-                    String timeUpload = String.valueOf(hour) + ':' + String.valueOf(minutes) + ':' + String.valueOf(seconds);
+                        }
 
-                    //Form info
-                    List<File> listFiles = new ArrayList<File>();
-                    Capabilities c = new Capabilities("aa", "aa", actualDate, "bb", userName, "qqq", listFiles);
-                    c.setTimeUpload(timeUpload);
-                    //Takes the name of the capabilitiy and java files assciated
-                    infoCapabilitie(file, c);
+                    }
 
-                    RequestDispatcher dispatcher = request.getRequestDispatcher("Database" + "?" + "action" + "=" + "saveData");
-                   
-                     LOGGER.severe("Redirecting");
-                    request.getSession().setAttribute("capabilitie", c);
-                    dispatcher.forward(request, response);
-                  
                 }
+
+
+            } catch (FileUploadException ex) {
+                System.out.println("Exception: " + ex.getMessage());
+            } catch (javazoom.upload.UploadException ex) {
+                System.out.println("Exception: " + ex.getMessage());
+            } catch (Exception ex) {
+                System.out.println("Exception: " + ex.getMessage());
             }
 
-        
-        } catch (FileUploadException ex) {
-            System.out.println("Exception: " + ex.getMessage());
-        }
-        catch( javazoom.upload.UploadException ex ){
-            System.out.println("Exception: " + ex.getMessage());
-        }
-                
-        catch (Exception ex) {
-            System.out.println("Exception: " + ex.getMessage());
-        }
 
-        
-    }
-    }
 
+        }
+    }
 
     /**
      * unTarGz: Decompress tar.gz files
