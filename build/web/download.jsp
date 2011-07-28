@@ -39,7 +39,7 @@
                                 </select>
                             </c:when>
                             <c:otherwise>
-                                <form name="formCap" method="post" action="#" class="formUser">
+                                <form name="formCap" method="post" action="DownloadData" class="formUser">
                                      
                                       <div id="selectOption">
                                           <p> Capabilities </p>

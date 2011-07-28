@@ -19,6 +19,7 @@ public class Capabilities {
     private String userUpload;
     private String comments;
     private List <File> listFile;
+    private String nameFile;
 
     public Capabilities(){
         this.name = "";
@@ -27,14 +28,16 @@ public class Capabilities {
         this.userUpload = "";
         this.comments = "";
         this.listFile = new ArrayList<File>();
+        this.nameFile = "";
     }
-    public Capabilities( String name, String id, java.sql.Date date, String timeUpload, String userUpload, String comments, List <File> listFile ){
+    public Capabilities( String name, String id, java.sql.Date date, String timeUpload, String userUpload, String comments, List <File> listFile, String nameFile ){
         this.name = name;
         this.id = id;
         this.dateUpload = date;
         this.userUpload = userUpload;
         this.comments = comments;
         this.listFile = listFile;
+        this.nameFile = nameFile;
     }
     
     public String getName(){
@@ -61,6 +64,10 @@ public class Capabilities {
         return listFile;
     }
 
+    public String getNameFile(){
+        return nameFile;
+    }
+
     public void setName( String name ){
         this.name = name;
     }
@@ -83,6 +90,10 @@ public class Capabilities {
 
     public void setListFile( List <File> listFile ){
         this.listFile = listFile;
+    }
+
+    public void setNameFile( String nameFile ){
+        this.nameFile = nameFile;
     }
 
     public void addListFile( File file ){

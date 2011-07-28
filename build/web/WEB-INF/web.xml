@@ -9,6 +9,14 @@
         <url-pattern>/UploadData</url-pattern>
     </servlet-mapping>
     <servlet>
+        <servlet-name>DownloadData</servlet-name>
+        <servlet-class>userdata.DownloadData</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name> DownloadData </servlet-name>
+        <url-pattern>/DownloadData</url-pattern>
+    </servlet-mapping>
+    <servlet>
         <servlet-name>Database</servlet-name>
         <servlet-class>userdata.Database</servlet-class>
         <init-param>

@@ -83,6 +83,7 @@ public class UploadData extends HttpServlet {
             String comments = "";
             String nameCap = "";
             String fileSelected = "";
+            String nameFolder = "";
 
             DiskFileItemFactory fileItemFactory = new DiskFileItemFactory();
             fileItemFactory.setSizeThreshold(10 * 1024 * 1024); //10 MB
@@ -102,6 +103,7 @@ public class UploadData extends HttpServlet {
                             file.mkdir();
                             String folderFile = getServletContext().getRealPath(DESTINATION_DIR_PATH + File.separator + item.getName());
                             File fileTwo = new File(folderFile, item.getName());
+                            nameFolder = fileTwo.getName();
                             item.write(fileTwo);
                             UploadData u = new UploadData();
                             u.unTarGz(fileTwo, folderFile);
@@ -127,6 +129,7 @@ public class UploadData extends HttpServlet {
                             c.setTimeUpload(timeUpload);
                             c.setListFile(listFiles);
                             c.setUserUpload(userName);
+                            c.setNameFile(nameFolder);
 
                             //Takes the name of the capabilitiy and java files assciated
                             infoCapabilitie(file, c);

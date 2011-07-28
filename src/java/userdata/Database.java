@@ -42,7 +42,6 @@ public class Database extends HttpServlet {
             Class.forName("com.mysql.jdbc.Driver");
             String urlPath = getServletContext().getRealPath(urlJDBC);
             if (connection == null) {
-                //    connection = DriverManager.getConnection("jdbc:msysql:" + urlPath, userJDBC, passwordJDBC );
                 connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/gsiWeb", "root", "root");
             }
         } catch (SQLException exSQL) {
@@ -93,6 +92,7 @@ public class Database extends HttpServlet {
                 String userUpload = cap.getUserUpload();
                 String comments = cap.getComments();
                 String id = id();
+                String nameFolder = cap.getNameFile();
 
                 //Check if the capability already exists
                 //Statement sm = connection.createStatement();
@@ -105,7 +105,7 @@ public class Database extends HttpServlet {
                     
                 }
 
-                smt = connection.prepareStatement("INSERT INTO capabilities (NAME,DATEUPLOAD,TIMEUPLOAD, ID,USERUPLOAD, COMMENTS, JAVAFILES) VALUES(?,?,?,?,?,?,?)");
+                smt = connection.prepareStatement("INSERT INTO capabilities (NAME,DATEUPLOAD,TIMEUPLOAD, ID,USERUPLOAD, COMMENTS, JAVAFILES, NAMEFOLDER) VALUES(?,?,?,?,?,?,?,?)");
                 smt.setString(1, name);
                 smt.setDate(2, date);
                 smt.setString(3, timeUpload);
@@ -113,6 +113,7 @@ public class Database extends HttpServlet {
                 smt.setString(5, userUpload);
                 smt.setString(6, comments);
                 smt.setString(7, javaFiles);
+                smt.setString(8, nameFolder);
                 smt.executeUpdate();
                 LOGGER.severe("Data saved");
 
@@ -131,6 +132,7 @@ public class Database extends HttpServlet {
                 RequestDispatcher dispatcher = request.getRequestDispatcher("upload.jsp");
                 dispatcher.forward(request, response);
             }
+            
         } catch (SQLException ex) {
             LOGGER.info("Fallo Insert " + ex.getMessage());
             throw new ServletException("SQL Insert " + ex.getMessage());

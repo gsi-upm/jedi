@@ -18,6 +18,9 @@ Author     : nachomv
     <c:param name="action" value="showData" />
 </c:url>
 
+<c:url var="DOWNLOAD_DATA" scope="session" value="DownloadData" />
+
+
 
 <html>
     <div class="container">
