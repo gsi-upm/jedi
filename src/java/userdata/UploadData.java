@@ -2,9 +2,6 @@ package userdata;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Iterator;
-import java.util.List;
-import java.util.ArrayList;
 import java.util.logging.Logger;
 
 
@@ -28,12 +25,10 @@ import java.io.FileOutputStream;
 import java.io.OutputStream;
 import com.ice.tar.TarArchive;
 import javax.servlet.http.HttpSession;
-
-
 import javax.xml.parsers.*;
 import org.w3c.dom.*;
 import java.util.*;
-import javazoom.upload.MultipartFormDataRequest;
+
 
 public class UploadData extends HttpServlet {
 

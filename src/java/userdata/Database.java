@@ -29,6 +29,7 @@ public class Database extends HttpServlet {
 
     private Connection connection;
     private static final Logger LOGGER = Logger.getLogger(Database.class.getName());
+    private static final String DESTINATION_DIR_PATH = "/files";
 
     @Override
     public void init(ServletConfig conf) throws ServletException {

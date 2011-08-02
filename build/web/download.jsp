@@ -40,21 +40,21 @@
                             </c:when>
                             <c:otherwise>
                                 <form name="formCap" method="post" action="DownloadData" class="formUser">
-                                     
-                                      <div id="selectOption">
-                                          <p> Capabilities </p>
-                                       <select name="capListName" multiple class="selectForm" size="4" >
-                                        <c:forEach var="capability" items="${resCapabilities.rows}">
-                                            <option> ${capability.name} </option>
-                                        </c:forEach>
-                                    </select>
-                                          <p> Download </p>
-                                    <select name="capsSelected" multiple size="4" class="selectForm">
-                                      
-                                    </select>
-                                      </div>
-                                      <input type="button" value="Add to list" onClick="addSelect( formCap.capListName.options[formCap.capListName.selectedIndex].value )" />
-                                      <input type="submit" value="Download" />
+
+                                    <div id="selectOption">
+                                        <p> Capabilities </p>
+                                        <select name="capListName" multiple class="selectForm" size="4" >
+                                            <c:forEach var="capability" items="${resCapabilities.rows}">
+                                                <option> ${capability.name} </option>
+                                            </c:forEach>
+                                        </select>
+                                        <p> Download </p>
+                                        <select name="capsSelected" multiple size="4" class="selectForm">
+
+                                        </select>
+                                    </div>
+                                    <input type="button" value="Add to list" onClick="addSelect( formCap.capListName.options[formCap.capListName.selectedIndex].value )" />
+                                    <input type="submit" value="Download" />
                                 </form>
                             </c:otherwise>
                         </c:choose>
@@ -66,12 +66,12 @@
     </div>
 
 
-        <script language="javascript" type="text/javascript">
-            function addSelect(  text ){
-                var option1 = new Option(text,"textOption","","");
-                var select = document.formCap.capsSelected;
-                select.appendChild(option1);
-            }
+    <script language="javascript" type="text/javascript">
+        function addSelect(  text ){
+            var option1 = new Option(text,"textOption","","");
+            var select = document.formCap.capsSelected;
+            select.appendChild(option1);
+        }
                
-        </script>
+    </script>
 </html>
