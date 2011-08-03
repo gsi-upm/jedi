@@ -4,13 +4,6 @@
  */
 package userdata;
 
-import com.ice.tar.TarEntry;
-import com.ice.tar.TarGzOutputStream;
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.ServletConfig;
@@ -18,7 +11,8 @@ import javax.servlet.ServletException;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.Date;
+import java.io.File;
 import java.util.List;
 import javax.servlet.http.HttpServletResponse;
 import java.io.BufferedOutputStream;
@@ -27,6 +21,12 @@ import java.util.logging.Logger;
 import org.apache.commons.compress.compressors.gzip.*;
 import org.apache.commons.compress.archivers.tar.*;
 import org.apache.commons.io.IOUtils;
+
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.Calendar;
 
 /**
  *
@@ -53,53 +53,82 @@ public class DownloadData extends HttpServlet {
     }
 
     private void helpDoPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        FileOutputStream fOut = null;
-        BufferedOutputStream bOut = null;
-        GzipCompressorOutputStream gzOut = null;
-        TarArchiveOutputStream tOut = null;
-
         try {
-            List<String> fileList = new ArrayList();
-
             String fileTar = getServletContext().getRealPath("/files") + "/temp/fileCompressed.tar.gz";
 
-            fileList.add("alarmclock");
-            fileList.add("blackjack");
+            List<String> names = new ArrayList();
+            names.add("alarmclock");
+            names.add("blackjack");
+
+            String filePathFirst = getServletContext().getRealPath("/files") + '/' + names.get(0) + ".tar.gz" + '/' + names.get(0);
+            String filePathSecond = getServletContext().getRealPath("/files") + '/' + names.get(1) + ".tar.gz" + '/' + names.get(1);
+
+            List<File> filesPath = new ArrayList();
+            filesPath.add(new File(filePathFirst));
+            filesPath.add(new File(filePathSecond));
+
+            Date actualDate = new Date();
+
+            String fileTemp = getServletContext().getRealPath("/files") + "/temp/";
+            String filePath = fileTemp + "compress";
+            List<List<File>> files = new ArrayList();
+
+            File fileDest = new File(filePath);
 
 
 
-//   String filePathFirst = getServletContext().getRealPath("/files") + '/' + fileList.get(0) + ".tar.gz" + '/' + fileList.get(0);
-            //       createTarGzOfDirectory(filePathFirst, fileTar);
-
-            for (int i = 0; i < fileList.size(); i++) {
-                String filePath = getServletContext().getRealPath("/files") + '/' + fileList.get(i) + ".tar.gz" + '/' + fileList.get(i);
-                createTarGzOfDirectory(filePath, fileTar);
-
-                fOut = new FileOutputStream(new File(fileTar));
-                bOut = new BufferedOutputStream(fOut);
-                gzOut = new GzipCompressorOutputStream(bOut);
-                tOut = new TarArchiveOutputStream(gzOut);
-
-                addFileToTarGz(tOut, filePath, "");
+            Date date = new Date();
 
 
+            Calendar calendar = Calendar.getInstance();
+            int hour = calendar.get(Calendar.HOUR_OF_DAY);
+            int minutes = calendar.get(Calendar.MINUTE);
+            int seconds = calendar.get(Calendar.SECOND);
+            String time = String.valueOf(hour) + String.valueOf(minutes) + String.valueOf(seconds);
 
+
+            for (int i = 0; i < filesPath.size(); i++) {
+                File fileDestTemp = new File(filePath + '/' + names.get(i));
+                copyDirectory(filesPath.get(i), fileDestTemp);
             }
-        } catch (IOException ex) {
-            LOGGER.severe("Exception: " + ex.getMessage());
+            createTarGzOfDirectory(filePath, fileTemp + "capabilities" + time + ".tar.gz");
+
         } catch (Exception ex) {
             LOGGER.severe("Exception: " + ex.getMessage());
-        } finally {
-            tOut.finish();
-            tOut.close();
-            gzOut.close();
-            bOut.close();
-            fOut.close();
         }
+    }
+
+    private void copyDirectory(File srcDir, File dstDir) throws IOException {
+        if (srcDir.isDirectory()) {
+            if (!dstDir.exists()) {
+                dstDir.mkdir();
+            }
+
+            String[] children = srcDir.list();
+            for (int i = 0; i < children.length; i++) {
+                copyDirectory(new File(srcDir, children[i]),
+                        new File(dstDir, children[i]));
+            }
+        } else {
+
+            copy(srcDir, dstDir);
+        }
+    }
+
+    // Copia el archivo src a el archivo dst
+    // si el archivo dst no existe, es creado
+    private void copy(File src, File dst) throws IOException {
+        InputStream in = new FileInputStream(src);
+        OutputStream out = new FileOutputStream(dst);
 
 
-
-
+        byte[] buf = new byte[1024];
+        int len;
+        while ((len = in.read(buf)) > 0) {
+            out.write(buf, 0, len);
+        }
+        in.close();
+        out.close();
     }
 
     /**
@@ -154,13 +183,10 @@ public class DownloadData extends HttpServlet {
 
         if (f.isFile()) {
             IOUtils.copy(new FileInputStream(f), tOut);
-
             tOut.closeArchiveEntry();
         } else {
             tOut.closeArchiveEntry();
-
             File[] children = f.listFiles();
-
             if (children != null) {
                 for (File child : children) {
                     addFileToTarGz(tOut, child.getAbsolutePath(), entryName + "/");
@@ -169,85 +195,6 @@ public class DownloadData extends HttpServlet {
         }
     }
 
-    /*  public void tarGz(List filePaths, String zipPath) throws FileNotFoundException {
-
-    FileInputStream inputStream = null;
-    BufferedInputStream bufferedInputStream = null;
-
-    FileOutputStream outputStream = null;
-    TarGzOutputStream tarOutputStream = null;
-
-    try {
-
-    outputStream = new FileOutputStream(zipPath);
-    tarOutputStream = new TarGzOutputStream(outputStream);
-
-    byte data[] = new byte[1024];
-    int dataSize = 0;
-
-    for (Iterator t = filePaths.iterator(); t.hasNext();) {
-    String cdrPath = "" + t.next();
-    System.out.println("cdrPath: " + cdrPath );
-    File fileTemp = new File(cdrPath);
-    System.out.println("fileTemp y cdrPath: "  + fileTemp.getCanonicalPath());
-    String cdrName = cdrPath;
-
-
-    TarEntry entry = new TarEntry(cdrName);
-    entry.setSize(fileTemp.length());
-    entry.setName(cdrName);
-    tarOutputStream.putNextEntry(entry);
-
-
-    inputStream = new FileInputStream(cdrPath);
-    bufferedInputStream = new BufferedInputStream(inputStream, data.length);
-
-    while ((dataSize = bufferedInputStream.read(data, 0, data.length)) != -1) {
-    tarOutputStream.write(data, 0, dataSize);
-
-    }
-
-    tarOutputStream.closeEntry();
-
-    if (bufferedInputStream != null) {
-    bufferedInputStream.close();
-    }
-
-    if (inputStream != null) {
-    inputStream.close();
-    }
-    }
-    } catch (FileNotFoundException ex) {
-    LOGGER.severe("Exception: " + ex.getMessage());
-    } catch (java.io.IOException ex) {
-    LOGGER.severe("Exception: " + ex.getMessage());
-    } catch (final Exception e) {
-    LOGGER.severe("Exception");
-    } finally {
-    try {
-    if (bufferedInputStream != null) {
-    bufferedInputStream.close();
-    }
-
-    if (inputStream != null) {
-    inputStream.close();
-    }
-
-    if (tarOutputStream != null) {
-    tarOutputStream.close();
-    }
-
-    if (outputStream != null) {
-    outputStream.close();
-    }
-    } catch (final IOException ioe) {
-    LOGGER.severe("Resource release error");
-    }
-    }
-
-
-
-    }*/
     private void listAll(File entry, List<File> listFile) throws java.io.IOException {
         try {
             if (!entry.exists()) {
@@ -255,7 +202,7 @@ public class DownloadData extends HttpServlet {
                 return;
             }
             if (entry.isFile()) {
-                System.out.println(entry.getCanonicalPath());
+                //  System.out.println(entry.getCanonicalPath());
                 listFile.add(entry);
             } else if (entry.isDirectory()) {
                 String[] fileName = entry.list();
