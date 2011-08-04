@@ -52,33 +52,44 @@ public class DownloadData extends HttpServlet {
 
     }
 
+/**
+ * Check if exist necessary folders to compress and download files
+ */
+    private void checkFolders(){
+        String fileTemp = getServletContext().getRealPath("/files") + "/temp";
+        File fileT = new File(fileTemp);
+        if(!fileT.isDirectory()){
+            fileT.mkdir();
+            LOGGER.info("Directory " + fileTemp + " created.");
+        }
+        String fileCompress = fileTemp + "/compress";
+        File fileComp = new File(fileCompress);
+        if(!fileComp.isDirectory()){
+            fileComp.mkdir();
+            LOGGER.info("Directory " + fileComp + " created.");
+        }
+
+    }
+
+    
     private void helpDoPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         try {
-            String fileTar = getServletContext().getRealPath("/files") + "/temp/fileCompressed.tar.gz";
+            checkFolders();
 
+            String listParam = request.getParameter("listParameters");
+            String [] listCapabilities = listParam.split(",");
+
+            
             List<String> names = new ArrayList();
-            names.add("alarmclock");
-            names.add("blackjack");
-
-            String filePathFirst = getServletContext().getRealPath("/files") + '/' + names.get(0) + ".tar.gz" + '/' + names.get(0);
-            String filePathSecond = getServletContext().getRealPath("/files") + '/' + names.get(1) + ".tar.gz" + '/' + names.get(1);
-
-            List<File> filesPath = new ArrayList();
-            filesPath.add(new File(filePathFirst));
-            filesPath.add(new File(filePathSecond));
-
-            Date actualDate = new Date();
+            List<File> listFiles = new ArrayList();
+            for(int i=0;i<listCapabilities.length;i++){
+                names.add(listCapabilities[i]);
+                String filePath = getServletContext().getRealPath("/files") + '/' + names.get(i).toLowerCase() + ".tar.gz" + '/' + names.get(i).toLowerCase();
+                listFiles.add(new File(filePath));
+            }
 
             String fileTemp = getServletContext().getRealPath("/files") + "/temp/";
             String filePath = fileTemp + "compress";
-            List<List<File>> files = new ArrayList();
-
-            File fileDest = new File(filePath);
-
-
-
-            Date date = new Date();
-
 
             Calendar calendar = Calendar.getInstance();
             int hour = calendar.get(Calendar.HOUR_OF_DAY);
@@ -87,9 +98,9 @@ public class DownloadData extends HttpServlet {
             String time = String.valueOf(hour) + String.valueOf(minutes) + String.valueOf(seconds);
 
 
-            for (int i = 0; i < filesPath.size(); i++) {
+            for (int i = 0; i < listFiles.size(); i++) {
                 File fileDestTemp = new File(filePath + '/' + names.get(i));
-                copyDirectory(filesPath.get(i), fileDestTemp);
+                copyDirectory(listFiles.get(i), fileDestTemp);
             }
             createTarGzOfDirectory(filePath, fileTemp + "capabilities" + time + ".tar.gz");
 
@@ -98,6 +109,13 @@ public class DownloadData extends HttpServlet {
         }
     }
 
+
+    /**
+     * copyDirectory: Copy one directory to other one
+     * @param srcDir
+     * @param dstDir
+     * @throws IOException
+     */
     private void copyDirectory(File srcDir, File dstDir) throws IOException {
         if (srcDir.isDirectory()) {
             if (!dstDir.exists()) {
@@ -115,8 +133,12 @@ public class DownloadData extends HttpServlet {
         }
     }
 
-    // Copia el archivo src a el archivo dst
-    // si el archivo dst no existe, es creado
+   /**
+    * copy: Copy one file 
+    * @param src
+    * @param dst
+    * @throws IOException
+    */
     private void copy(File src, File dst) throws IOException {
         InputStream in = new FileInputStream(src);
         OutputStream out = new FileOutputStream(dst);

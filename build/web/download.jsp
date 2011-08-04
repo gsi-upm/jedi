@@ -50,8 +50,8 @@
                                         </select>
                                         <p> Download </p>
                                         <select name="capsSelected" multiple size="4" class="selectForm">
-
                                         </select>
+                                        <input type="hidden" name="listParameters" id="listParameters" />
                                     </div>
                                     <input type="button" value="Add to list" onClick="addSelect( formCap.capListName.options[formCap.capListName.selectedIndex].value )" />
                                     <input type="submit" value="Download" />
@@ -70,7 +70,9 @@
         function addSelect(  text ){
             var option1 = new Option(text,"textOption","","");
             var select = document.formCap.capsSelected;
-            select.appendChild(option1);
+            select.appendChild(option1);        
+        document.getElementById("listParameters").value += text;
+        document.getElementById("listParameters").value += ',';
         }
                
     </script>

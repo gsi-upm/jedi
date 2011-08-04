@@ -100,6 +100,16 @@ public class UploadData extends HttpServlet {
                             File fileTwo = new File(folderFile, item.getName());
                             nameFolder = fileTwo.getName();
                             item.write(fileTwo);
+
+                            LOGGER.severe("FICHERO" + fileTwo.getName());
+                            String nameCapTemp = fileTwo.getName();
+                            int posSufix = nameCapTemp.indexOf(".tar.gz");
+                            if( posSufix != -1 ){
+                                nameCapTemp = nameCapTemp.substring(0, posSufix);
+                            }
+                            c.setName(nameCapTemp);                           
+
+
                             UploadData u = new UploadData();
                             u.unTarGz(fileTwo, folderFile);
 
@@ -220,8 +230,6 @@ public class UploadData extends HttpServlet {
                 String filePath = file.getCanonicalPath();
                 if (filePath.endsWith(".xml")) {
                     String nameCap = getNameCap(file);
-                    cap.setName(nameCap);
-                    LOGGER.severe("File saved as: " + nameCap);
                 } else if (filePath.endsWith(".java")) {
                     cap.addListFile(file);
                 }
