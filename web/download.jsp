@@ -53,7 +53,8 @@
                                         </select>
                                         <input type="hidden" name="listParameters" id="listParameters" />
                                     </div>
-                                    <input type="button" value="Add to list" onClick="addSelect( formCap.capListName.options[formCap.capListName.selectedIndex].value )" />
+                                    <input type="button" value="Add" onClick="addSelect( formCap.capListName.options[formCap.capListName.selectedIndex].value )" />
+                                    <input type="button" value="Delete" onClick="deleteSelext( formCap.capsSelected.selectedIndex)" />
                                     <input type="submit" value="Download" />
                                 </form>
                             </c:otherwise>
@@ -71,8 +72,13 @@
             var option1 = new Option(text,"textOption","","");
             var select = document.formCap.capsSelected;
             select.appendChild(option1);        
-        document.getElementById("listParameters").value += text;
-        document.getElementById("listParameters").value += ',';
+            document.getElementById("listParameters").value += text;
+            document.getElementById("listParameters").value += ',';
+        }
+
+        function deleteSelext( selected){
+            var mySelect = document.forms['formCap'].elements['capsSelected'];
+            mySelect.options[selected] = null;
         }
                
     </script>

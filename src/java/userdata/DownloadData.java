@@ -11,7 +11,6 @@ import javax.servlet.ServletException;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.io.File;
 import java.util.List;
 import javax.servlet.http.HttpServletResponse;
@@ -27,6 +26,7 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Calendar;
+import javax.servlet.ServletOutputStream;
 
 /**
  *
@@ -52,37 +52,44 @@ public class DownloadData extends HttpServlet {
 
     }
 
-/**
- * Check if exist necessary folders to compress and download files
- */
-    private void checkFolders(){
+    /**
+     * Check if exist necessary folders to compress and download files
+     */
+    private void checkFolders() {
         String fileTemp = getServletContext().getRealPath("/files") + "/temp";
         File fileT = new File(fileTemp);
-        if(!fileT.isDirectory()){
+        if (!fileT.isDirectory()) {
             fileT.mkdir();
             LOGGER.info("Directory " + fileTemp + " created.");
         }
         String fileCompress = fileTemp + "/compress";
         File fileComp = new File(fileCompress);
-        if(!fileComp.isDirectory()){
+        if (!fileComp.isDirectory()) {
             fileComp.mkdir();
             LOGGER.info("Directory " + fileComp + " created.");
         }
 
     }
 
-    
+    /**
+     * helpDoPost: Auxiliar method to handle get and post requests.
+     * Download capabilities selectioned previously compressed in a tar.gz file
+     * @param request
+     * @param response
+     * @throws ServletException
+     * @throws IOException
+     */
     private void helpDoPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         try {
             checkFolders();
 
             String listParam = request.getParameter("listParameters");
-            String [] listCapabilities = listParam.split(",");
+            String[] listCapabilities = listParam.split(",");
 
-            
+
             List<String> names = new ArrayList();
             List<File> listFiles = new ArrayList();
-            for(int i=0;i<listCapabilities.length;i++){
+            for (int i = 0; i < listCapabilities.length; i++) {
                 names.add(listCapabilities[i]);
                 String filePath = getServletContext().getRealPath("/files") + '/' + names.get(i).toLowerCase() + ".tar.gz" + '/' + names.get(i).toLowerCase();
                 listFiles.add(new File(filePath));
@@ -102,13 +109,34 @@ public class DownloadData extends HttpServlet {
                 File fileDestTemp = new File(filePath + '/' + names.get(i));
                 copyDirectory(listFiles.get(i), fileDestTemp);
             }
-            createTarGzOfDirectory(filePath, fileTemp + "capabilities" + time + ".tar.gz");
+            String aux = "capabilities" + time + ".tar.gz";
+            String nameFile = fileTemp + aux;
+            createTarGzOfDirectory(filePath, nameFile);
+
+
+            FileInputStream archivo = new FileInputStream(nameFile);
+            int longitud = archivo.available();
+            byte[] datos = new byte[longitud];
+            archivo.read(datos);
+            archivo.close();
+
+            response.setContentType("application/octet-stream");
+
+            ServletOutputStream ouputStream = response.getOutputStream();
+            ouputStream.write(datos);
+            ouputStream.flush();
+            ouputStream.close();
+
+
+
+
+
+
 
         } catch (Exception ex) {
             LOGGER.severe("Exception: " + ex.getMessage());
         }
     }
-
 
     /**
      * copyDirectory: Copy one directory to other one
@@ -133,12 +161,12 @@ public class DownloadData extends HttpServlet {
         }
     }
 
-   /**
-    * copy: Copy one file 
-    * @param src
-    * @param dst
-    * @throws IOException
-    */
+    /**
+     * copy: Copy one file
+     * @param src
+     * @param dst
+     * @throws IOException
+     */
     private void copy(File src, File dst) throws IOException {
         InputStream in = new FileInputStream(src);
         OutputStream out = new FileOutputStream(dst);
