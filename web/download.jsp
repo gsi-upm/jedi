@@ -45,7 +45,7 @@
                                         <p> Capabilities </p>
                                         <select name="capListName" multiple class="selectForm" size="4" >
                                             <c:forEach var="capability" items="${resCapabilities.rows}">
-                                                <option> ${capability.name} </option>
+                                                <option> ${capability.name} - ${capability.comments} </option>
                                             </c:forEach>
                                         </select>
                                         <p> Download </p>

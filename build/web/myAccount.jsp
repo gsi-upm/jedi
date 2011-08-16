@@ -29,18 +29,18 @@
         <jsp:setProperty name="error" property="messageError" value="Email incorrect" />
     </c:if>
     <c:if test="${!emailOk}">
-        
-    
-    <sql:update>
-        UPDATE dataUsers
-        set email = ?
-        where user = ?
-        <sql:param value="${param.emailUpdated}" />
-        <sql:param value="${validUser.user}" />
-    </sql:update>
+
+
+        <sql:update>
+            UPDATE dataUsers
+            set email = ?
+            where user = ?
+            <sql:param value="${param.emailUpdated}" />
+            <sql:param value="${validUser.user}" />
+        </sql:update>
         <jsp:setProperty name="message" property="messageError" value="Email updated correctly" />
         <jsp:setProperty name="validUser" property="email" value="${param.emailUpdated}" />
-        </c:if>
+    </c:if>
 
 
 </c:if>
@@ -63,8 +63,8 @@
             <sql:param value="${param.passUpdated}" />
             <sql:param value="${validUser.user}" />
         </sql:update>
-            <jsp:setProperty name="message" property="messageError" value="Password updated correctly" />
-            <jsp:setProperty name="validUser" property="password" value="${param.passUpdated}" />
+        <jsp:setProperty name="message" property="messageError" value="Password updated correctly" />
+        <jsp:setProperty name="validUser" property="password" value="${param.passUpdated}" />
     </c:if>
 </c:if>
 
@@ -84,28 +84,29 @@
             </c:if>
 
             <div id="main" class="round">
-                 <div id="dataUpdate" class="formUser">
-                <p> My Account </p>
-                <ul>
-                    <li> <label> Username: </label> ${validUser.user}  </li>
-                    <li> <label> Email: </label> ${validUser.email} </li>
-                </ul>
-                
+                <div id="dataUpdate" class="formUser">
+                    <p> My Account </p>
+                    <ul>
+                        <li> <label> Username: </label> ${validUser.user}  </li>
+                        <li> <label> Email: </label> ${validUser.email} </li>
+                    </ul>
+                    <p> Update </p>
+
+                    <p> ${error.messageError} </p>
+                    <p> ${message.messageError} </p>
 
 
-                
-                <p> Update </p>
-
-                <p> ${error.messageError} </p>
-                <p> ${message.messageError} </p>
-
-               
                     <form action="myAccount.jsp" method="post" name="updateInfo" >
                         <ul>
                             <li> <label> New email </label> <input type="text" name="emailUpdated"  />  </li>
                             <li> <label> New password </label> <input type="password" name="passUpdated" /> </li>
                             <li> <label> Rewrite new password </label> <input type="password" name="passUpdatedRepeat" /> </li>
                             <li> <input type="submit" value="update" /> </li>
+                        </ul>
+                    </form>
+                    <form action="myAccount.jsp" method="post" name="deleteAccount">
+                        <ul>
+                     <li> <input type="submit" value="Delete my account"> </li>
                         </ul>
                     </form>
                 </div>
