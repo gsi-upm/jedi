@@ -104,9 +104,9 @@
                             <li> <input type="submit" value="update" /> </li>
                         </ul>
                     </form>
-                    <form action="myAccount.jsp" method="post" name="deleteAccount">
+                    <form action="deleteUser.jsp" method="post" name="deleteAccount">
                         <ul>
-                     <li> <input type="submit" value="Delete my account"> </li>
+                     <li> <input type="submit" value="Unsuscribe"> </li>
                         </ul>
                     </form>
                 </div>

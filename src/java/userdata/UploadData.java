@@ -156,6 +156,9 @@ public class UploadData extends HttpServlet {
                         String value = item.getString();
                         if (name.equals("comments")) {
                             comments = value;
+                            if( comments.equals("")){
+                                comments = "Empty description";
+                            }
                             c.setComments(comments);
                         } else if (name.equals("nameCap")) {
                             nameCap = value;
