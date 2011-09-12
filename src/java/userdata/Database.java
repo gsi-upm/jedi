@@ -133,6 +133,23 @@ public class Database extends HttpServlet {
                 RequestDispatcher dispatcher = request.getRequestDispatcher("upload.jsp");
                 dispatcher.forward(request, response);
             }
+
+            else if(action.equals("deleteUser")){
+                PreparedStatement smt;
+                HttpSession session = request.getSession(true);
+                User user = (User) session.getValue("validUser");
+                String nameUser = user.getUser();
+                String emailUser = user.getEmail();
+                String statement = "DELETE FROM dataUsers where user = '" + nameUser + "' AND email = '" + emailUser + "'";
+                LOGGER.info("Consulta SQL: " + statement);
+                smt = connection.prepareStatement(statement);
+                smt.executeUpdate();
+                LOGGER.info("User name:" + nameUser);
+                LOGGER.info("Email user: " + emailUser);
+                RequestDispatcher dispatcher = request.getRequestDispatcher("deleteUser.jsp");
+                dispatcher.forward(request, response);
+                
+            }
             
         } catch (SQLException ex) {
             LOGGER.info("Fallo Insert " + ex.getMessage());

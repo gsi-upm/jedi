@@ -15,28 +15,6 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
-<%--<sql:query var="gsiWeb">
-    SELECT * FROM dataUsers
-    WHERE user = ? and email = ?
-    <sql:param value="${validUser.user}" />
-    <sql:param value="${validUser.email}" />
-</sql:query>--%>
-
-<sql:query var="deleteUser">
-    select * from dataUsers
-    WHERE user = ? AND email = ?
-    <sql:param value="${validUser.user}" />
-    <sql:param value="${validUser.email}" />
-</sql:query>
-    <c:if test="{deleteUser.rowCount != 0}">
-        <sql:query var="delete">
-            ALTER table dataUsers drop deleteUser
-        </sql:query>
-    </c:if>
-
-
-
-
 <html>
     <div class="container">
         <head>
@@ -47,7 +25,7 @@
         <body>
             <div id="main" class="round">
                 <p> Your data has been erased correctly </p>
-               <c:remove var="validUser" />
+                <c:remove var="validUser" />
 
             </div>
             <%@include file="/WEB-INF/jspf/footer.jspf" %>

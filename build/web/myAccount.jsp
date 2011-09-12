@@ -104,9 +104,11 @@
                             <li> <input type="submit" value="update" /> </li>
                         </ul>
                     </form>
-                    <form action="deleteUser.jsp" method="post" name="deleteAccount">
+                    <form action="Database" method="post" name="deleteAccount">
                         <ul>
-                     <li> <input type="submit" value="Unsuscribe"> </li>
+                            <li> <input type="hidden" name="action" value="deleteUser"> </li>
+                            <li> <input type="submit" value="Unsuscribe"> </li>
+
                         </ul>
                     </form>
                 </div>
