@@ -45,7 +45,7 @@
                                         <p> Capabilities </p>
                                         <select name="capListName" multiple class="selectForm" size="4" >
                                             <c:forEach var="capability" items="${resCapabilities.rows}">
-                                                <option> ${capability.name} - ${capability.comments} </option>
+                                                <option> ${capability.name}  </option>
                                             </c:forEach>
                                         </select>
                                         <p> Download </p>
@@ -68,12 +68,24 @@
 
 
     <script language="javascript" type="text/javascript">
-        function addSelect(  text ){
+        function addSelect( text ){
             var option1 = new Option(text,"textOption","","");
             var select = document.formCap.capsSelected;
-            select.appendChild(option1);        
-            document.getElementById("listParameters").value += text;
-            document.getElementById("listParameters").value += ',';
+            
+            var lengthCapsSelect = document.formCap.capsSelected.length;
+            var alreadyInTheList = false;
+            for(i=0;i<lengthCapsSelect;i++){
+
+                if( document.formCap.capsSelected.options[i].text == text ){
+                    alreadyInTheList = true;
+                
+                }                
+            }
+            if( alreadyInTheList == false ){
+                select.appendChild(option1);        
+            }
+            
+            
         }
 
         function deleteSelext( selected){

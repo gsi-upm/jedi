@@ -1,4 +1,4 @@
-/*
+    /*
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
@@ -92,10 +92,12 @@ public class DownloadData extends HttpServlet {
             for (int i = 0; i < listCapabilities.length; i++) {
                 names.add(listCapabilities[i]);
                 String filePath = getServletContext().getRealPath("/files") + '/' + names.get(i).toLowerCase() + ".tar.gz" + '/' + names.get(i).toLowerCase();
+                LOGGER.info("Nombre cap: " + names.get(i));
                 listFiles.add(new File(filePath));
             }
 
             String fileTemp = getServletContext().getRealPath("/files") + "/temp/";
+            LOGGER.info("Directorio temporal: " + fileTemp);
             String filePath = fileTemp + "compress";
 
             Calendar calendar = Calendar.getInstance();

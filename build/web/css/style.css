@@ -127,8 +127,6 @@ ul{
 .formUser{
     background: #fff;
     padding:10px;
-
-
 }
 
 .formUser ul li{
@@ -182,7 +180,7 @@ label{
     border-style: solid;
     border-color: #2345A3;
     margin-top:20px;
-    width:600px;
+    width:400px;
     height: 100px;
 }
 

@@ -95,24 +95,30 @@
                     <p> ${error.messageError} </p>
                     <p> ${message.messageError} </p>
 
-
-                    <form action="myAccount.jsp" method="post" name="updateInfo" >
+                    <div class="formUser">
+                        <form action="myAccount.jsp" method="post" name="updateInfo" >
+                            <ul>
+                                <li> <label> New email </label> <input type="text" name="emailUpdated"  />  </li>
+                                <li> <label> New password </label> <input type="password" name="passUpdated" /> </li>
+                                <li> <label> Rewrite new password </label> <input type="password" name="passUpdatedRepeat" /> </li>
+                                <li> <input type="submit" value="update" /> </li>
+                            </ul>
+                        </form>
                         <ul>
-                            <li> <label> New email </label> <input type="text" name="emailUpdated"  />  </li>
-                            <li> <label> New password </label> <input type="password" name="passUpdated" /> </li>
-                            <li> <label> Rewrite new password </label> <input type="password" name="passUpdatedRepeat" /> </li>
-                            <li> <input type="submit" value="update" /> </li>
+                            <li>       <input type="button" value="delete" onclick="goToWeb()" /> </li>
                         </ul>
-                    </form>
-                    <form action="Database" method="post" name="deleteAccount">
-                        <ul>
-                            <li> <input type="hidden" name="action" value="deleteUser"> </li>
-                            <li> <input type="submit" value="Unsuscribe"> </li>
-
-                        </ul>
-                    </form>
+                    </div>
                 </div>
             </div>
+
+            <script type="text/javascript" >
+                function goToWeb(){
+                    if(confirm("Do you really want to delete your account?")){
+                        document.location.href="Database"+"?action=deleteUser";
+                    }                            
+                }
+            </script>
+
 
             <%@include file="/WEB-INF/jspf/footer.jspf" %>
         </body>
