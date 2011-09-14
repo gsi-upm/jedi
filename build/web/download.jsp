@@ -1,4 +1,4 @@
-<%-- 
+<%--
     Document   : download
     Created on : Jul 24, 2011, 12:02:56 PM
     Author     : nachomv
@@ -55,7 +55,7 @@
                                     </div>
                                     <input type="button" value="Add" onClick="addSelect( formCap.capListName.options[formCap.capListName.selectedIndex].value )" />
                                     <input type="button" value="Delete" onClick="deleteSelext( formCap.capsSelected.selectedIndex)" />
-                                    <input type="submit" value="Download" />
+                                    <input type="submit" value="Download" onclick="showList()"/>
                                 </form>
                             </c:otherwise>
                         </c:choose>
@@ -67,31 +67,36 @@
     </div>
 
 
-    <script language="javascript" type="text/javascript">
+
+   <script language="javascript" type="text/javascript">
         function addSelect( text ){
             var option1 = new Option(text,"textOption","","");
             var select = document.formCap.capsSelected;
-            
+
             var lengthCapsSelect = document.formCap.capsSelected.length;
             var alreadyInTheList = false;
             for(i=0;i<lengthCapsSelect;i++){
 
                 if( document.formCap.capsSelected.options[i].text == text ){
                     alreadyInTheList = true;
-                
-                }                
+                    alert("Ya está en la liiiiiiista :D")
+                }
             }
             if( alreadyInTheList == false ){
-                select.appendChild(option1);        
+                select.appendChild(option1);
+                document.getElementById("listParameters").value += text;
+                document.getElementById("listParameters").value += ',';
             }
-            
-            
         }
 
         function deleteSelext( selected){
             var mySelect = document.forms['formCap'].elements['capsSelected'];
             mySelect.options[selected] = null;
         }
-               
+
+      
+
     </script>
+
+
 </html>
