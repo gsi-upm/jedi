@@ -5,7 +5,6 @@
 package userdata;
 
 import java.sql.*;
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -141,7 +140,6 @@ public class Database extends HttpServlet {
                 String nameUser = user.getUser();
                 String emailUser = user.getEmail();
                 String statement = "DELETE FROM dataUsers where user = '" + nameUser + "' AND email = '" + emailUser + "'";
-                LOGGER.info("Consulta SQL: " + statement);
                 smt = connection.prepareStatement(statement);
                 smt.executeUpdate();
                 LOGGER.info("User name:" + nameUser);

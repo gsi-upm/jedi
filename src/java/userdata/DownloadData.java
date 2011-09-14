@@ -27,6 +27,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Calendar;
 import javax.servlet.ServletOutputStream;
+import java.sql.*;
 
 /**
  *
@@ -35,10 +36,29 @@ import javax.servlet.ServletOutputStream;
 public class DownloadData extends HttpServlet {
 
     private static final Logger LOGGER = Logger.getLogger(Database.class.getName());
+    private Connection connection;
 
     @Override
-    public void init(ServletConfig config) throws ServletException {
-        super.init(config);
+    public void init(ServletConfig conf) throws ServletException {
+        super.init(conf);
+        String urlJDBC = conf.getInitParameter("urlJDBC");
+        String driverJDBC = conf.getInitParameter("driverJDBC");
+        String userJDBC = conf.getInitParameter("userJDBC");
+        String passwordJDBC = conf.getInitParameter("passwordJDBC");
+
+        try {
+            Class.forName("com.mysql.jdbc.Driver");
+            String urlPath = getServletContext().getRealPath(urlJDBC);
+            if (connection == null) {
+                connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/gsiWeb", "root", "root");
+            }
+        } catch (SQLException exSQL) {
+            LOGGER.severe("Error creating the connection " + exSQL.getMessage());
+            throw new ServletException(exSQL.getMessage());
+        } catch (ClassNotFoundException exClass) {
+            LOGGER.severe("Error loading the Driver " + exClass.getMessage());
+            throw new ServletException(exClass.getMessage());
+        }
     }
 
     @Override
@@ -94,6 +114,29 @@ public class DownloadData extends HttpServlet {
                 String filePath = getServletContext().getRealPath("/files") + '/' + names.get(i).toLowerCase() + ".tar.gz" + '/' + names.get(i).toLowerCase();
                 LOGGER.info("Nombre cap: " + names.get(i));
                 listFiles.add(new File(filePath));
+
+                //Increments downloadTimes index of each capability downloaded
+                String query = "SELECT timesDownloaded from capabilities WHERE name=" + "'" + listCapabilities[i] + "'";
+                Statement smt = connection.createStatement();
+                ResultSet result = smt.executeQuery(query);
+
+                while( result.next() ){
+                    LOGGER.info("Times downloaded for capability " + listCapabilities[i] + " " + result.getInt("timesDownloaded"));
+                    PreparedStatement queryTimes = connection.prepareStatement("UPDATE capabilities set timesDownloaded = ? WHERE name = ?");
+                    queryTimes.setInt(1, ((result.getInt("timesDownloaded"))+1));
+                    queryTimes.setString(2, listCapabilities[i]);
+                    queryTimes.executeUpdate();
+                    queryTimes.close();
+
+                }
+                //LOGGER.info("Tipo de resultado: " + smt.execute(query));
+                
+
+
+
+                
+
+
             }
 
             String fileTemp = getServletContext().getRealPath("/files") + "/temp/";
