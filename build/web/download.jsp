@@ -27,8 +27,8 @@
                     <jsp:param name="origUrL" value="${pageContext.request.requestURL}" />
                     <jsp:param name="messageError" value="Please log in first" />
                 </jsp:forward>
-
             </c:if>
+
             <div id="main" class="round">
                 <div id="capabilities">
                     <div class="capName">
@@ -40,12 +40,11 @@
                             </c:when>
                             <c:otherwise>
                                 <form name="formCap" method="post" action="DownloadData" class="formUser">
-
                                     <div id="selectOption">
                                         <p> Capabilities </p>
                                         <select name="capListName" multiple class="selectForm" size="4" >
                                             <c:forEach var="capability" items="${resCapabilities.rows}">
-                                                <option> ${capability.name}  </option>
+                                                <option ondblclick="addSelect( formCap.capListName.options[formCap.capListName.selectedIndex].value )"> ${capability.name}  </option>
                                             </c:forEach>
                                         </select>
                                         <p> Download </p>
@@ -68,7 +67,7 @@
 
 
 
-   <script language="javascript" type="text/javascript">
+    <script language="javascript" type="text/javascript">
         function addSelect( text ){
             var option1 = new Option(text,"textOption","","");
             var select = document.formCap.capsSelected;
@@ -79,7 +78,6 @@
 
                 if( document.formCap.capsSelected.options[i].text == text ){
                     alreadyInTheList = true;
-                    alert("Ya está en la liiiiiiista :D")
                 }
             }
             if( alreadyInTheList == false ){

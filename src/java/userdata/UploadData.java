@@ -91,7 +91,6 @@ public class UploadData extends HttpServlet {
                 while (itr.hasNext()) {
                     FileItem item = (FileItem) itr.next();
                     if (!item.isFormField()) {
-                        //LOGGER.severe(item.getName());
                         if (!item.getName().equals("")) {
                             //Creates a folder and decompress the tar.gz file
                             File file = new File(destinationDir, item.getName());
@@ -101,7 +100,6 @@ public class UploadData extends HttpServlet {
                             nameFolder = fileTwo.getName();
                             item.write(fileTwo);
 
-                            LOGGER.severe("FICHERO" + fileTwo.getName());
                             String nameCapTemp = fileTwo.getName();
                             int posSufix = nameCapTemp.indexOf(".tar.gz");
                             if( posSufix != -1 ){

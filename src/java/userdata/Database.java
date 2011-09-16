@@ -12,13 +12,15 @@ import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import java.util.logging.Logger;
 import java.io.IOException;
+import java.util.ArrayList;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.http.HttpSession;
 import javax.servlet.jsp.jstl.sql.Result;
 import javax.servlet.jsp.jstl.sql.ResultSupport;
 
 import java.util.Random;
-
+import java.util.List;
+import java.util.Arrays;
 
 /**
  *
@@ -64,17 +66,17 @@ public class Database extends HttpServlet {
     }
 
     @Override
-    public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
+    public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         petitionAux(request, response);
     }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-      petitionAux( request, response );
+        petitionAux(request, response);
     }
 
-    private void petitionAux(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
-          try {
+    private void petitionAux(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        try {
             String action = request.getParameter("action");
             if (action == null) {
                 LOGGER.warning("Action null");
@@ -95,17 +97,25 @@ public class Database extends HttpServlet {
                 String nameFolder = cap.getNameFile();
 
                 //Check if the capability already exists
-                //Statement sm = connection.createStatement();
-               // ResultSet resultSet = sm.executeQuery("SELECT * FROM capabilities where name ="+name);
-                //LOGGER.info("There is already a capability with this name, it will be saved with a new one");
+                PreparedStatement sm = connection.prepareStatement("SELECT * FROM capabilities where name=?");
+                sm.setString(1,name);
+                ResultSet resultSet = sm.executeQuery();
 
-                String javaFiles = "";
-                for(int i=0;i<cap.getListFile().size();i++){
-                    javaFiles = javaFiles +  cap.getListFile().get(i).getName() + ';';
-                    
+
+                while (resultSet.next()) {
+
+                    RequestDispatcher disp = request.getRequestDispatcher("upload.jsp");
+                    request.getSession().setAttribute("messageError", "There is already a capability whith this name, please write a new one");
+                    disp.forward(request, response);
                 }
 
-                smt = connection.prepareStatement("INSERT INTO capabilities (NAME,DATEUPLOAD,TIMEUPLOAD, ID,USERUPLOAD, COMMENTS, JAVAFILES, NAMEFOLDER) VALUES(?,?,?,?,?,?,?,?)");
+                String javaFiles = "";
+                for (int i = 0; i < cap.getListFile().size(); i++) {
+                    javaFiles = javaFiles + cap.getListFile().get(i).getName() + ';';
+
+                }
+
+                smt = connection.prepareStatement("INSERT INTO capabilities (NAME,DATEUPLOAD,TIMEUPLOAD, ID,USERUPLOAD, COMMENTS, JAVAFILES, NAMEFOLDER, TIMESDOWNLOAD) VALUES(?,?,?,?,?,?,?,?,?)");
                 smt.setString(1, name);
                 smt.setDate(2, date);
                 smt.setString(3, timeUpload);
@@ -114,6 +124,7 @@ public class Database extends HttpServlet {
                 smt.setString(6, comments);
                 smt.setString(7, javaFiles);
                 smt.setString(8, nameFolder);
+                smt.setInt(9, 0);
                 smt.executeUpdate();
                 LOGGER.severe("Data saved");
 
@@ -126,34 +137,73 @@ public class Database extends HttpServlet {
                 request.setAttribute("resCapabilities", result);
                 RequestDispatcher dispatcher = request.getRequestDispatcher("download.jsp");
                 dispatcher.forward(request, response);
-            }
-            else if(action.equals("emptyFile")){
+            } else if (action.equals("emptyFile")) {
                 request.getSession().setAttribute("messageError", "Please, write a name and select a file");
                 RequestDispatcher dispatcher = request.getRequestDispatcher("upload.jsp");
                 dispatcher.forward(request, response);
-            }
-
-            else if(action.equals("deleteUser")){
+            } else if (action.equals("deleteUser")) {
                 PreparedStatement smt;
                 HttpSession session = request.getSession(true);
                 User user = (User) session.getValue("validUser");
                 String nameUser = user.getUser();
                 String emailUser = user.getEmail();
-                String statement = "DELETE FROM dataUsers where user = '" + nameUser + "' AND email = '" + emailUser + "'";
-                smt = connection.prepareStatement(statement);
-                smt.executeUpdate();
+                PreparedStatement statement = connection.prepareStatement("DELETE FROM dataUsers where user=? AND email=?");
+                statement.setString(1, nameUser);
+                statement.setString(2, emailUser);
+
+                statement.executeUpdate();
                 LOGGER.info("User name:" + nameUser);
                 LOGGER.info("Email user: " + emailUser);
                 RequestDispatcher dispatcher = request.getRequestDispatcher("deleteUser.jsp");
                 dispatcher.forward(request, response);
-                
+            } else if (action.equals("topFive")) {
+                Statement smt = connection.createStatement();
+                String count = "SELECT COUNT(*) from capabilities";
+                ResultSet resCount = smt.executeQuery(count);
+                Integer tableLength = 0;
+                while (resCount.next()) {
+                    tableLength = resCount.getInt(1);
+                }
+              
+                String query = "SELECT timesDownloaded from capabilities";
+                ResultSet result = smt.executeQuery(query);
+
+                List<Integer> listCaps = new ArrayList<Integer>();
+
+                while (result.next()) {
+                    listCaps.add(result.getInt("timesDownloaded"));
+                }
+
+                Integer caps[] = new Integer[tableLength];
+                for (int i = 0; i < tableLength; i++) {
+                    caps[i] = listCaps.get(i);
+                }
+
+                Arrays.sort(caps);
+                int numberTopCaps = 5;
+                Integer topFiveCapsTimes[] = new Integer[numberTopCaps];
+                for (int i = 0; i < 5; i++) {
+                    topFiveCapsTimes[i] = caps[i + tableLength - numberTopCaps];
+                }
+                String topFiveCaps[] = new String[numberTopCaps];
+
+                for (int i = 0; i < numberTopCaps; i++) {
+                    PreparedStatement statement = connection.prepareStatement("SELECT * from capabilities where timesDownloaded=?");
+                    statement.setInt(1, topFiveCapsTimes[i]);
+                    ResultSet rs = statement.executeQuery();
+                    while (rs.next()) {
+                  //       topFiveCaps[i] = result.getString(1);
+                    }
+                    LOGGER.info("TOP capability: " + topFiveCaps[i]);
+
+                }
             }
-            
+
         } catch (SQLException ex) {
             LOGGER.info("Fallo Insert " + ex.getMessage());
             throw new ServletException("SQL Insert " + ex.getMessage());
-        } 
-        
+        }
+
     }
 
     /**
@@ -170,8 +220,9 @@ public class Database extends HttpServlet {
             tempInt = Math.round(tempInt);
             String id = String.valueOf((int) tempInt);
 
-            Statement sm = connection.createStatement();
-            ResultSet resultSet = sm.executeQuery("SELECT * FROM capabilities WHERE ID =" + id);
+            PreparedStatement sm = connection.prepareStatement("SELECT * FROM capabilities WHERE ID=?");
+            sm.setString(1, id);
+            ResultSet resultSet = sm.executeQuery();
             resultSet.first();
             int col = resultSet.getRow();
             if (col != 0) {
