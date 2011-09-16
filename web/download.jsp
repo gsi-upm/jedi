@@ -75,8 +75,13 @@
                 </c:when>
                 <c:otherwise>
                     <ul class="round">
-                        <c:forEach var="capsRating" items="${resCapsOrdered.rows}">
+                        <c:forEach var="capsRating" items="${resCapsOrdered.rows}" varStatus="capsCounter">
+                            <c:choose>
+                            <c:when test="${capsCounter.count <= 5}">
+
                             <li> ${capsRating.name} </li>
+                            </c:when>
+                            </c:choose>
                         </c:forEach>
                     </ul>
                 </c:otherwise>
