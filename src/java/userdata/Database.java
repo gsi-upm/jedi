@@ -78,6 +78,7 @@ public class Database extends HttpServlet {
     private void petitionAux(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         try {
             String action = request.getParameter("action");
+            String secondAction = request.getParameter("secondAction");
             if (action == null) {
                 LOGGER.warning("Action null");
                 return;
@@ -98,7 +99,7 @@ public class Database extends HttpServlet {
 
                 //Check if the capability already exists
                 PreparedStatement sm = connection.prepareStatement("SELECT * FROM capabilities where name=?");
-                sm.setString(1,name);
+                sm.setString(1, name);
                 ResultSet resultSet = sm.executeQuery();
 
 
@@ -115,7 +116,7 @@ public class Database extends HttpServlet {
 
                 }
 
-                smt = connection.prepareStatement("INSERT INTO capabilities (NAME,DATEUPLOAD,TIMEUPLOAD, ID,USERUPLOAD, COMMENTS, JAVAFILES, NAMEFOLDER, TIMESDOWNLOAD) VALUES(?,?,?,?,?,?,?,?,?)");
+                smt = connection.prepareStatement("INSERT INTO capabilities (NAME,DATEUPLOAD,TIMEUPLOAD, ID,USERUPLOAD, COMMENTS, JAVAFILES, NAMEFOLDER, TIMESDOWNLOADED) VALUES(?,?,?,?,?,?,?,?,?)");
                 smt.setString(1, name);
                 smt.setDate(2, date);
                 smt.setString(3, timeUpload);
@@ -135,8 +136,30 @@ public class Database extends HttpServlet {
                 ResultSet resultSet = smt.executeQuery("SELECT * FROM capabilities");
                 Result result = ResultSupport.toResult(resultSet);
                 request.setAttribute("resCapabilities", result);
+
+
+                //Looks for a list with the top downloaded capabilities
+
+                String count = "SELECT COUNT(*) from capabilities";
+                ResultSet resCount = smt.executeQuery(count);
+                Integer tableLength = 0;
+                while (resCount.next()) {
+                    tableLength = resCount.getInt(1);
+                }
+
+                if (tableLength != 0) {
+                    String query = "SELECT name, timesdownloaded from capabilities order by timesdownloaded desc";
+                    ResultSet resultCaps = smt.executeQuery(query);
+                    Result resultCap = ResultSupport.toResult(resultCaps);
+                    request.setAttribute("resCapsOrdered", resultCap);
+                }
+
                 RequestDispatcher dispatcher = request.getRequestDispatcher("download.jsp");
                 dispatcher.forward(request, response);
+
+
+
+
             } else if (action.equals("emptyFile")) {
                 request.getSession().setAttribute("messageError", "Please, write a name and select a file");
                 RequestDispatcher dispatcher = request.getRequestDispatcher("upload.jsp");
@@ -156,7 +179,10 @@ public class Database extends HttpServlet {
                 LOGGER.info("Email user: " + emailUser);
                 RequestDispatcher dispatcher = request.getRequestDispatcher("deleteUser.jsp");
                 dispatcher.forward(request, response);
-            } else if (action.equals("topFive")) {
+            }
+            if (secondAction.equals("topFive")) {
+
+                //Looks for a list with the top downloaded capabilities
                 Statement smt = connection.createStatement();
                 String count = "SELECT COUNT(*) from capabilities";
                 ResultSet resCount = smt.executeQuery(count);
@@ -164,43 +190,18 @@ public class Database extends HttpServlet {
                 while (resCount.next()) {
                     tableLength = resCount.getInt(1);
                 }
-              
-                String query = "SELECT timesDownloaded from capabilities";
-                ResultSet result = smt.executeQuery(query);
 
-                List<Integer> listCaps = new ArrayList<Integer>();
-
-                while (result.next()) {
-                    listCaps.add(result.getInt("timesDownloaded"));
-                }
-
-                Integer caps[] = new Integer[tableLength];
-                for (int i = 0; i < tableLength; i++) {
-                    caps[i] = listCaps.get(i);
-                }
-
-                Arrays.sort(caps);
-                int numberTopCaps = 5;
-                Integer topFiveCapsTimes[] = new Integer[numberTopCaps];
-                for (int i = 0; i < 5; i++) {
-                    topFiveCapsTimes[i] = caps[i + tableLength - numberTopCaps];
-                }
-                String topFiveCaps[] = new String[numberTopCaps];
-
-                for (int i = 0; i < numberTopCaps; i++) {
-                    PreparedStatement statement = connection.prepareStatement("SELECT * from capabilities where timesDownloaded=?");
-                    statement.setInt(1, topFiveCapsTimes[i]);
-                    ResultSet rs = statement.executeQuery();
-                    while (rs.next()) {
-                  //       topFiveCaps[i] = result.getString(1);
-                    }
-                    LOGGER.info("TOP capability: " + topFiveCaps[i]);
-
+                if (tableLength != 0) {
+                    String query = "SELECT name, timesdownloaded from capabilities order by timesdownloaded desc";
+                    ResultSet resultCaps = smt.executeQuery(query);
+                    Result result = ResultSupport.toResult(resultCaps);
+                    request.setAttribute("resCapsOrdered", result);
+                    RequestDispatcher dispatcher = request.getRequestDispatcher("download.jsp");
+                    dispatcher.forward(request, response);
                 }
             }
-
         } catch (SQLException ex) {
-            LOGGER.info("Fallo Insert " + ex.getMessage());
+            LOGGER.info("Error Insert " + ex.getMessage());
             throw new ServletException("SQL Insert " + ex.getMessage());
         }
 

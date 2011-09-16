@@ -58,43 +58,63 @@
                                 </form>
                             </c:otherwise>
                         </c:choose>
+
+
                     </div>
                 </div>
             </div>
-            <%@include file="/WEB-INF/jspf/footer.jspf" %>
-        </body>
+
+
     </div>
 
+    
+        <div id="topRatingCaps" class="formUser" >
+            <c:choose>
+                <c:when test="${resCapsOrdered.rowCount eq 0}">
+                    No capabilities to show
+                </c:when>
+                <c:otherwise>
+                    <ul class="round">
+                        <c:forEach var="capsRating" items="${resCapsOrdered.rows}">
+                            <li> ${capsRating.name} </li>
+                        </c:forEach>
+                    </ul>
+                </c:otherwise>
+            </c:choose>
+        </div>
+    
 
+</body>
+<%@include file="/WEB-INF/jspf/footer.jspf" %>
 
-    <script language="javascript" type="text/javascript">
-        function addSelect( text ){
-            var option1 = new Option(text,"textOption","","");
-            var select = document.formCap.capsSelected;
+<script language="javascript" type="text/javascript">
+    function addSelect( text ){
+        var option1 = new Option(text,"textOption","","");
+        var select = document.formCap.capsSelected;
 
-            var lengthCapsSelect = document.formCap.capsSelected.length;
-            var alreadyInTheList = false;
-            for(i=0;i<lengthCapsSelect;i++){
+        var lengthCapsSelect = document.formCap.capsSelected.length;
+        var alreadyInTheList = false;
+        for(i=0;i<lengthCapsSelect;i++){
 
-                if( document.formCap.capsSelected.options[i].text == text ){
-                    alreadyInTheList = true;
-                }
-            }
-            if( alreadyInTheList == false ){
-                select.appendChild(option1);
-                document.getElementById("listParameters").value += text;
-                document.getElementById("listParameters").value += ',';
+            if( document.formCap.capsSelected.options[i].text == text ){
+                alreadyInTheList = true;
             }
         }
-
-        function deleteSelext( selected){
-            var mySelect = document.forms['formCap'].elements['capsSelected'];
-            mySelect.options[selected] = null;
+        if( alreadyInTheList == false ){
+            select.appendChild(option1);
+            document.getElementById("listParameters").value += text;
+            document.getElementById("listParameters").value += ',';
         }
+    }
+
+    function deleteSelext( selected){
+        var mySelect = document.forms['formCap'].elements['capsSelected'];
+        mySelect.options[selected] = null;
+    }
 
       
 
-    </script>
+</script>
 
 
 </html>

@@ -193,6 +193,16 @@ label{
     float:right;
 }
 
+
+/* download */
+
+#topRatingCaps{
+  float: right;
+  margin-left: 400px;
+  
+
+}
+
 /* Navigation */
 
 nav {
