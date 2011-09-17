@@ -1,0 +1,15 @@
+<script type="text/javascript" src="js/jquery-1.2.6.min.js"> </script>
+<script type="text/javascript" src="js/jquery.tagcloud.js"> </script>
+<script type="text/javascript" src="js/jquery.tagcloud.min.js"> </script>
+<script type="text/javascript" src="js/jquery.tinysort.min.js"> </script>
+<script type="text/javascript" src="js/tagCloud.js" > </script>
+
+
+<div id="tagCloud" >
+    <ul>
+      <li><a href="#"> cloudOne </a> </li>
+      <li><a href="#"> cloudTwo </a> </li>
+      <li><a href="#"> cloudThree </a> </li>
+      <li><a href="#"> cloudFour </a> </li>
+     </ul>
+</div>

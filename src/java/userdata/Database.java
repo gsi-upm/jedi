@@ -12,15 +12,13 @@ import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import java.util.logging.Logger;
 import java.io.IOException;
-import java.util.ArrayList;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.http.HttpSession;
 import javax.servlet.jsp.jstl.sql.Result;
 import javax.servlet.jsp.jstl.sql.ResultSupport;
 
 import java.util.Random;
-import java.util.List;
-import java.util.Arrays;
+
 
 /**
  *
@@ -156,9 +154,6 @@ public class Database extends HttpServlet {
 
                 RequestDispatcher dispatcher = request.getRequestDispatcher("download.jsp");
                 dispatcher.forward(request, response);
-
-
-
 
             } else if (action.equals("emptyFile")) {
                 request.getSession().setAttribute("messageError", "Please, write a name and select a file");

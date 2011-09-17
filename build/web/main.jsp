@@ -18,6 +18,11 @@
    
       <body>
         <div id="main" class="round">
+            <%@include file="/WEB-INF/jspf/tagCloud.jspf" %>
+
+
+
+
             <c:if test="${validUser == null}">
                 <jsp:forward page="login.jsp">
                     <jsp:param name="origURL" value="${pageContext.request.requestURL}" />
