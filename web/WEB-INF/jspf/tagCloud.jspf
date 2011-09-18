@@ -1,15 +1,48 @@
-<script type="text/javascript" src="js/jquery-1.2.6.min.js"> </script>
-<script type="text/javascript" src="js/jquery.tagcloud.js"> </script>
-<script type="text/javascript" src="js/jquery.tagcloud.min.js"> </script>
-<script type="text/javascript" src="js/jquery.tinysort.min.js"> </script>
-<script type="text/javascript" src="js/tagCloud.js" > </script>
-
-
-<div id="tagCloud" >
+<%@ page import="org.mcavallo.opencloud.*" %>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<div id="tagCloud" class="round">
     <ul>
-      <li><a href="#"> cloudOne </a> </li>
-      <li><a href="#"> cloudTwo </a> </li>
-      <li><a href="#"> cloudThree </a> </li>
-      <li><a href="#"> cloudFour </a> </li>
-     </ul>
+        <div>
+            <%
+                        Cloud cloud = new Cloud();
+                        cloud.setMaxTagsToDisplay(50);
+                        cloud.setMaxWeight(40.0);
+                        cloud.setMinWeight(20.0);
+
+                        cloud.addTag(new Tag("Development", 2.5));
+                        cloud.addTag(new Tag("Programming", 1));
+                        cloud.addTag(new Tag("Open Source", 2));
+                        cloud.addTag(new Tag("Jadex", 2.5));
+                        cloud.addTag(new Tag("Jadex Editor", 1.6));
+                        cloud.addTag(new Tag("Eclipse", 2.3));
+                        cloud.addTag(new Tag("Capabilities", 2.4));
+                        cloud.addTag(new Tag("Java", 1.7));
+                        cloud.addTag(new Tag("Agents", 1.1));
+                        cloud.addTag(new Tag("Intelligent Systems Group", 3.2));
+                        cloud.addTag(new Tag("Upload", 2.3));
+                        cloud.addTag(new Tag("Download", 2.3));
+                        cloud.addTag(new Tag("Intelligent agents", 2.3));
+                        cloud.addTag(new Tag("Belief Desire Intention", 3));
+                        cloud.addTag(new Tag("BDI", 3));
+                        cloud.addTag(new Tag("Belief Desire Intention", 3));
+                        cloud.addTag(new Tag("aa", 3));
+                        cloud.addTag(new Tag("bbb", 3));
+                        cloud.addTag(new Tag("PEDRITO", 10));
+                        cloud.addTag(new Tag("qqqqq", 3));
+                        cloud.addTag(new Tag("aaaaa", 3));
+                        cloud.addTag(new Tag("ggggggggggg", 3));
+                     
+
+            %>
+            <%
+     // Cycles through the output tags
+                        for (Tag tag : cloud.tags()) {
+                            // Writes a link for each tag.
+                            // We use the method getWeightInt() to set the font size of the link
+            %>
+            <a href="<%= tag.getLink()%>" style="font-size: <%= tag.getWeightInt()%>px;"><%= tag.getName()%></a>
+
+            <% }%>
+        </div> 
+    </ul>
 </div>
