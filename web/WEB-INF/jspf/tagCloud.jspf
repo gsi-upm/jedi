@@ -3,42 +3,35 @@
 <div id="tagCloud" class="round">
     <ul>
         <div>
-            <%
-                        Cloud cloud = new Cloud();
+            <%          Cloud cloud = new Cloud();
                         cloud.setMaxTagsToDisplay(50);
                         cloud.setMaxWeight(40.0);
                         cloud.setMinWeight(20.0);
 
-                        cloud.addTag(new Tag("Development", 2.5));
-                        cloud.addTag(new Tag("Programming", 1));
-                        cloud.addTag(new Tag("Open Source", 2));
-                        cloud.addTag(new Tag("Jadex", 2.5));
-                        cloud.addTag(new Tag("Jadex Editor", 1.6));
-                        cloud.addTag(new Tag("Eclipse", 2.3));
-                        cloud.addTag(new Tag("Capabilities", 2.4));
-                        cloud.addTag(new Tag("Java", 1.7));
-                        cloud.addTag(new Tag("Agents", 1.1));
-                        cloud.addTag(new Tag("Intelligent Systems Group", 3.2));
-                        cloud.addTag(new Tag("Upload", 2.3));
-                        cloud.addTag(new Tag("Download", 2.3));
-                        cloud.addTag(new Tag("Intelligent agents", 2.3));
-                        cloud.addTag(new Tag("Belief Desire Intention", 3));
-                        cloud.addTag(new Tag("BDI", 3));
-                        cloud.addTag(new Tag("Belief Desire Intention", 3));
-                        cloud.addTag(new Tag("aa", 3));
-                        cloud.addTag(new Tag("bbb", 3));
-                        cloud.addTag(new Tag("PEDRITO", 10));
-                        cloud.addTag(new Tag("qqqqq", 3));
-                        cloud.addTag(new Tag("aaaaa", 3));
-                        cloud.addTag(new Tag("ggggggggggg", 3));
-                     
-
+                        cloud.addTag(new Tag("Development", "#",  2.5));
+                        cloud.addTag(new Tag("Programming","#",  1));
+                        cloud.addTag(new Tag("Open Source","#",  2));
+                        cloud.addTag(new Tag("Jadex","#",  2.5));
+                        cloud.addTag(new Tag("JEDI","#",  5));
+                        cloud.addTag(new Tag("Jadex Editor","#",  1.6));
+                        cloud.addTag(new Tag("Eclipse", "#", 2.3));
+                        cloud.addTag(new Tag("Capabilities","#",  2.4));
+                        cloud.addTag(new Tag("Java", "#", 1.7));
+                        cloud.addTag(new Tag("Agents", "#", 1.1));
+                        cloud.addTag(new Tag("Intelligent Systems Group","#",  3.2));
+                        cloud.addTag(new Tag("Upload", "#", 2.3));
+                        cloud.addTag(new Tag("Download","#",  2.3));
+                        cloud.addTag(new Tag("Intelligent agents","#",  2.3));
+                        cloud.addTag(new Tag("Belief Desire Intention","#",  3));
+                        cloud.addTag(new Tag("BDI", "#", 3));
+                        cloud.addTag(new Tag("Belief Desire Intention","#",  3));
+                        cloud.addTag(new Tag("GSI","#",  5));
+                        cloud.addTag(new Tag("DIT","#",  3));
+                        cloud.addTag(new Tag("UPM","#",  2));
             %>
             <%
-     // Cycles through the output tags
-                        for (Tag tag : cloud.tags()) {
-                            // Writes a link for each tag.
-                            // We use the method getWeightInt() to set the font size of the link
+                             for (Tag tag : cloud.tags()) {
+                            
             %>
             <a href="<%= tag.getLink()%>" style="font-size: <%= tag.getWeightInt()%>px;"><%= tag.getName()%></a>
 

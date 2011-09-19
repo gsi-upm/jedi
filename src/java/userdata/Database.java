@@ -175,26 +175,8 @@ public class Database extends HttpServlet {
                 RequestDispatcher dispatcher = request.getRequestDispatcher("deleteUser.jsp");
                 dispatcher.forward(request, response);
             }
-            if (secondAction.equals("topFive")) {
-
-                //Looks for a list with the top downloaded capabilities
-                Statement smt = connection.createStatement();
-                String count = "SELECT COUNT(*) from capabilities";
-                ResultSet resCount = smt.executeQuery(count);
-                Integer tableLength = 0;
-                while (resCount.next()) {
-                    tableLength = resCount.getInt(1);
-                }
-
-                if (tableLength != 0) {
-                    String query = "SELECT name, timesdownloaded from capabilities order by timesdownloaded desc";
-                    ResultSet resultCaps = smt.executeQuery(query);
-                    Result result = ResultSupport.toResult(resultCaps);
-                    request.setAttribute("resCapsOrdered", result);
-                    RequestDispatcher dispatcher = request.getRequestDispatcher("download.jsp");
-                    dispatcher.forward(request, response);
-                }
-            }
+           
+           
         } catch (SQLException ex) {
             LOGGER.info("Error Insert " + ex.getMessage());
             throw new ServletException("SQL Insert " + ex.getMessage());

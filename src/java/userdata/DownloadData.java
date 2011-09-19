@@ -21,6 +21,8 @@ import org.apache.commons.compress.compressors.gzip.*;
 import org.apache.commons.compress.archivers.tar.*;
 import org.apache.commons.io.IOUtils;
 
+import javax.servlet.RequestDispatcher;
+
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
@@ -104,6 +106,17 @@ public class DownloadData extends HttpServlet {
             checkFolders();
 
             String listParam = request.getParameter("listParameters");
+            if (listParam == null || listParam.equals("") || listParam.equals("empty")) {
+                request.setAttribute("messageError", "Please select a minimun of one capability to download");
+                RequestDispatcher dispatcher = request.getRequestDispatcher("Database?action=showData");
+                dispatcher.forward(request, response);
+                LOGGER.info("Estoy aquiiii");
+            }
+            else{
+
+
+
+
             String[] listCapabilities = listParam.split(",");
 
 
@@ -120,27 +133,17 @@ public class DownloadData extends HttpServlet {
                 Statement smt = connection.createStatement();
                 ResultSet result = smt.executeQuery(query);
 
-                while( result.next() ){
+                while (result.next()) {
                     LOGGER.info("Times downloaded for capability " + listCapabilities[i] + " " + result.getInt("timesDownloaded"));
                     PreparedStatement queryTimes = connection.prepareStatement("UPDATE capabilities set timesDownloaded = ? WHERE name = ?");
-                    queryTimes.setInt(1, ((result.getInt("timesDownloaded"))+1));
+                    queryTimes.setInt(1, ((result.getInt("timesDownloaded")) + 1));
                     queryTimes.setString(2, listCapabilities[i]);
                     queryTimes.executeUpdate();
                     queryTimes.close();
-
                 }
-                //LOGGER.info("Tipo de resultado: " + smt.execute(query));
-                
-
-
-
-                
-
-
             }
 
             String fileTemp = getServletContext().getRealPath("/files") + "/temp/";
-            LOGGER.info("Directorio temporal: " + fileTemp);
             String filePath = fileTemp + "compress";
 
             Calendar calendar = Calendar.getInstance();
@@ -175,7 +178,7 @@ public class DownloadData extends HttpServlet {
 
 
 
-
+            }
 
 
         } catch (Exception ex) {

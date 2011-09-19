@@ -10,6 +10,7 @@
     "http://www.w3.org/TR/html4/loose.dtd">
 
     <html>
+        <%@include file="/WEB-INF/jspf/tagCloud.jspf" %>
     <div class="container">
     <head>
        <%@include file="/WEB-INF/jspf/header.jspf" %>
