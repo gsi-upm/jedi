@@ -29,7 +29,6 @@
                     <c:forEach var="capsRating" items="${resCapsOrdered.rows}" varStatus="capsCounter">
                         <c:choose>
                             <c:when test="${capsCounter.count <= 5}">
-
                                 <li> ${capsRating.name} </li>
                             </c:when>
                         </c:choose>
@@ -62,10 +61,6 @@
             </c:if>
 
             <div id="main" class="round">
-
-
-
-
                 <div id="capabilities">
                     <div class="capName">
                         <c:choose>
@@ -78,17 +73,21 @@
                                 <form name="formCap" method="post" action="DownloadData" class="formUser">
                                     <div id="selectOption">
                                         <p> Capabilities </p>
-                                       <!-- <select name="capListName" multiple class="selectForm" size="4" >-->
-                                       <ul class="selectForm">
-                                           <c:forEach var="capability" items="${resCapabilities.rows}" varStatus="selectCounter">
-                                                <!--<option ondblclick="addSelect( formCap.capListName.options[formCap.capListName.selectedIndex].value )"> ${capability.name}  </option>-->
+                                        <select name="capListName" multiple class="selectForm" size="4" >
+                                            <c:forEach var="capability" items="${resCapabilities.rows}" varStatus="selectCounter">
+                                                <c:choose>
+                                                    <c:when test="${selectCounter.count % 2 == 0}">
+                                                        <option class="selectFirstClass" ondblclick="addSelect( formCap.capListName.options[formCap.capListName.selectedIndex].value )"> ${capability.name}  </option>
+                                                    </c:when>
+                                                    <c:otherwise>
+                                                        <option class="selectSecondClass" ondblclick="addSelect( formCap.capListName.options[formCap.capListName.selectedIndex].value )"> ${capability.name}  </option>
+                                                    </c:otherwise>
+                                                </c:choose>
 
-                                                
                                             </c:forEach>
-                                       </ul>
-                                        <!--</select>-->
+                                        </select>
                                         <p> Download </p>
-                                        <select name="capsSelected" multiple size="4" class="selectForm">
+                                        <select name="capsSelected" multiple size="4" class="selectForm download">
                                         </select>
                                         <input type="hidden" name="listParameters" id="listParameters" value="empty"/>
                                     </div>

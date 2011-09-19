@@ -37,9 +37,25 @@
 }
 
 .selectForm{
-    width: 200px;
+   
     background-color: white;
+    font-size: 20px;
+    height: 200px;
+}
 
+.download{
+    height: 100px;
+}
+
+.selectFirstClass{
+    background-color: #0082A3;
+    color:white;
+}
+
+.selectSecondClass{
+    
+  
+    
 }
 
 /* tagcloud */
@@ -195,7 +211,7 @@ label{
     border-color: #2345A3;
     margin-top:20px;
     width:400px;
-    height: 100px;
+    
 }
 
 #select option{
