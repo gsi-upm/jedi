@@ -12,6 +12,18 @@
 <%@ taglib prefix="sql" uri="http://java.sun.com/jsp/jstl/sql" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
+<%--<sql:query var="comments">
+    SELECT * from capabilities
+    WHERE name = ? and id = ?
+    <sql:param value="${param.nameCap}"/>
+    <sql:param value="${param.idCap}" />
+</sql:query>
+    <ul>
+    <c:forEach var="comments" items="${comments.rows}">
+        <li> <c:out value="${comments.comment}" /> </li>
+    </c:forEach>
+</ul>--%>
+
 
 
 <html>
@@ -49,10 +61,6 @@
         </head>
 
         <body>
-
-
-
-
             <c:if test="${validUser == null}" >
                 <jsp:forward page="login.jsp">
                     <jsp:param name="origUrL" value="${pageContext.request.requestURL}" />

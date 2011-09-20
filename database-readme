@@ -10,5 +10,5 @@ create table dataUsers(user varchar(50), email varchar(50), password varchar(50)
 
 3) A table "capabilities". You can also create it typing: 
 
-create table capabilities( name varchar(50), dateUpload date, timeupload varchar(50), id varchar(30), userUpload varchar(50), comments varchar(50), javafiles varchar(4294967295), namefolder varchar(100), timesDownload INT);
+create table capabilities( name varchar(50), dateUpload date, timeupload varchar(50), id varchar(30), userUpload varchar(50), comments varchar(50), javafiles varchar(4294967295), namefolder varchar(100), timesDownload INT, keyWords varchar(600));
 

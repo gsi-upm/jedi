@@ -28,7 +28,7 @@ import javax.servlet.http.HttpSession;
 import javax.xml.parsers.*;
 import org.w3c.dom.*;
 import java.util.*;
-
+import java.beans.Expression;
 
 public class UploadData extends HttpServlet {
 
@@ -102,10 +102,10 @@ public class UploadData extends HttpServlet {
 
                             String nameCapTemp = fileTwo.getName();
                             int posSufix = nameCapTemp.indexOf(".tar.gz");
-                            if( posSufix != -1 ){
+                            if (posSufix != -1) {
                                 nameCapTemp = nameCapTemp.substring(0, posSufix);
                             }
-                            c.setName(nameCapTemp);                           
+                            c.setName(nameCapTemp);
 
 
                             UploadData u = new UploadData();
@@ -154,7 +154,7 @@ public class UploadData extends HttpServlet {
                         String value = item.getString();
                         if (name.equals("comments")) {
                             comments = value;
-                            if( comments.equals("")){
+                            if (comments.equals("")) {
                                 comments = "Empty description";
                             }
                             c.setComments(comments);
@@ -230,7 +230,7 @@ public class UploadData extends HttpServlet {
             if (file.isFile()) {
                 String filePath = file.getCanonicalPath();
                 if (filePath.endsWith(".xml")) {
-                    String nameCap = getNameCap(file);
+                    getInfoCap(file);
                 } else if (filePath.endsWith(".java")) {
                     cap.addListFile(file);
                 }
@@ -255,27 +255,44 @@ public class UploadData extends HttpServlet {
     }
 
     /**
-     * getNameCap: Looks for the name parameter in the XML file
+     * getInfoCap: Looks for the key words in XML files
      * @param file
      * @return
      * @throws Exception
      */
-    private String getNameCap(File file) throws Exception {
+    private void getInfoCap(File file) throws Exception {
         try {
             DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
             DocumentBuilder builder = builderFactory.newDocumentBuilder();
             Document document = builder.parse(file);
+            LOGGER.info("Nombre file: " + file.getName());
             document.getDocumentElement().normalize();
-            Element rootElement = document.getDocumentElement();
-            String capabilityName = rootElement.getAttribute("name");
-            return capabilityName;
+            //Element rootElement = document.getDocumentElement();
+            //String capabilityName = rootElement.getAttribute("name");
+            NodeList listGoals = document.getElementsByTagName("performgoal");
+            for (int i = 0; i < listGoals.getLength(); i++) {
+                Node goal = listGoals.item(i);
+                if (goal.getNodeType() == Node.ELEMENT_NODE) {
+                    Element element = (Element) goal;
+                    LOGGER.info("achievegoal: " + getTagValue("name", element));
+                }
+
+            }
+
 
         } catch (Exception ex) {
             System.out.println("Exception: " + ex.getMessage());
-            return (ex.getMessage());
+
         }
 
     }
+
+    public String getTagValue(String tag, Element elemento) {
+        NodeList lista = elemento.getElementsByTagName(tag).item(0).getChildNodes();
+        Node valor = (Node) lista.item(0);
+        return valor.getNodeValue();
+    }
 }
+
 
 

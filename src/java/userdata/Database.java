@@ -19,7 +19,6 @@ import javax.servlet.jsp.jstl.sql.ResultSupport;
 
 import java.util.Random;
 
-
 /**
  *
  * @author nachomv
@@ -101,34 +100,36 @@ public class Database extends HttpServlet {
                 ResultSet resultSet = sm.executeQuery();
 
 
-                while (resultSet.next()) {
+                if (resultSet.first() == true) {
 
                     RequestDispatcher disp = request.getRequestDispatcher("upload.jsp");
                     request.getSession().setAttribute("messageError", "There is already a capability whith this name, please write a new one");
                     disp.forward(request, response);
+                } else {
+
+
+                    String javaFiles = "";
+                    for (int i = 0; i < cap.getListFile().size(); i++) {
+                        javaFiles = javaFiles + cap.getListFile().get(i).getName() + ';';
+
+                    }
+
+                    smt = connection.prepareStatement("INSERT INTO capabilities (NAME,DATEUPLOAD,TIMEUPLOAD, ID,USERUPLOAD, COMMENTS, JAVAFILES, NAMEFOLDER, TIMESDOWNLOADED) VALUES(?,?,?,?,?,?,?,?,?)");
+                    smt.setString(1, name);
+                    smt.setDate(2, date);
+                    smt.setString(3, timeUpload);
+                    smt.setString(4, id);
+                    smt.setString(5, userUpload);
+                    smt.setString(6, comments);
+                    smt.setString(7, javaFiles);
+                    smt.setString(8, nameFolder);
+                    smt.setInt(9, 0);
+                    smt.executeUpdate();
+                    LOGGER.severe("Data saved");
+
+                    RequestDispatcher dispatcher = request.getRequestDispatcher("uploadCorrect.jsp");
+                    dispatcher.forward(request, response);
                 }
-
-                String javaFiles = "";
-                for (int i = 0; i < cap.getListFile().size(); i++) {
-                    javaFiles = javaFiles + cap.getListFile().get(i).getName() + ';';
-
-                }
-
-                smt = connection.prepareStatement("INSERT INTO capabilities (NAME,DATEUPLOAD,TIMEUPLOAD, ID,USERUPLOAD, COMMENTS, JAVAFILES, NAMEFOLDER, TIMESDOWNLOADED) VALUES(?,?,?,?,?,?,?,?,?)");
-                smt.setString(1, name);
-                smt.setDate(2, date);
-                smt.setString(3, timeUpload);
-                smt.setString(4, id);
-                smt.setString(5, userUpload);
-                smt.setString(6, comments);
-                smt.setString(7, javaFiles);
-                smt.setString(8, nameFolder);
-                smt.setInt(9, 0);
-                smt.executeUpdate();
-                LOGGER.severe("Data saved");
-
-                RequestDispatcher dispatcher = request.getRequestDispatcher("uploadCorrect.jsp");
-                dispatcher.forward(request, response);
             } else if (action.equals("showData")) {
                 Statement smt = connection.createStatement();
                 ResultSet resultSet = smt.executeQuery("SELECT * FROM capabilities");
@@ -175,8 +176,8 @@ public class Database extends HttpServlet {
                 RequestDispatcher dispatcher = request.getRequestDispatcher("deleteUser.jsp");
                 dispatcher.forward(request, response);
             }
-           
-           
+
+
         } catch (SQLException ex) {
             LOGGER.info("Error Insert " + ex.getMessage());
             throw new ServletException("SQL Insert " + ex.getMessage());
