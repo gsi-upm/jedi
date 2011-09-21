@@ -29,8 +29,6 @@
                         <ul>
                             <li> <label> User </label> <input type="text" name="user" value="${fn:escapeXml(cookie.user.value)}" />  </li>
                             <li> <label> Password </label> <input type="password" name="password" value="${fn:escapeXml(cookie.password.value)}" /> </li>
-                            <li> <label> Remember my user and password </label> <input type="checkbox" name="remember" ${!empty cookie.user ? 'checked' : ''}> </li>
-                            <li> <p> (This feature requires cookies to be enabled in your browser) </p> </li>
                             <li> <input type="hidden" name="origUrl" value="${param.origUrL}" /> </li>
                             <li> <input type="submit" value="login" />
                         </ul>

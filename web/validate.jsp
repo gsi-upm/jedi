@@ -50,6 +50,11 @@
                         <jsp:setProperty name="error" property="messageError" value="Please enter an email" />
                     </c:if>
 
+                    <c:if test="${empty param.answer}" var="emptyAnswer" >
+                        <jsp:setProperty name="error" property="messageError" value="Please enter an answer" />
+                    </c:if>
+
+
                     <!-- Email validation -->
                     <c:if test="${!emptyEmail}">
                         <c:set var="existsAt" value="${fn:contains(param.email, '@')}" />

@@ -269,16 +269,14 @@ public class UploadData extends HttpServlet {
             document.getDocumentElement().normalize();
             //Element rootElement = document.getDocumentElement();
             //String capabilityName = rootElement.getAttribute("name");
-            NodeList listGoals = document.getElementsByTagName("performgoal");
-            for (int i = 0; i < listGoals.getLength(); i++) {
-                Node goal = listGoals.item(i);
-                if (goal.getNodeType() == Node.ELEMENT_NODE) {
-                    Element element = (Element) goal;
-                    LOGGER.info("achievegoal: " + getTagValue("name", element));
-                }
+            NodeList nl = document.getElementsByTagName("beliefs");
 
-            }
-
+            if(nl != null && nl.getLength() > 0) {
+			for(int i = 0 ; i < nl.getLength();i++) {
+                        Element el = (Element)nl.item(i);
+                        LOGGER.info("Belief: " + el.toString());
+			}
+		}
 
         } catch (Exception ex) {
             System.out.println("Exception: " + ex.getMessage());
@@ -287,11 +285,9 @@ public class UploadData extends HttpServlet {
 
     }
 
-    public String getTagValue(String tag, Element elemento) {
-        NodeList lista = elemento.getElementsByTagName(tag).item(0).getChildNodes();
-        Node valor = (Node) lista.item(0);
-        return valor.getNodeValue();
-    }
+    
+
+  
 }
 
 
