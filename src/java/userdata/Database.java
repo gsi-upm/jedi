@@ -199,17 +199,28 @@ public class Database extends HttpServlet {
                 tempInt = tempInt * 100000000;
                 tempInt = Math.round(tempInt);
                 String newPass = String.valueOf((int) tempInt);
+
+
+                PreparedStatement statementTwo;
                 if (email != null) {
-                    PreparedStatement statement = connection.prepareStatement("UPDATE dataUsers SET password = " + "'" + newPass +  "'" + " where email = " + email );
-                    LOGGER.info("UPDATE dataUsers SET password = " + "'" + newPass +  "'" + " where email = " + email );
-                    statement.executeUpdate();
+                    String updatePass = "update gsiWeb.dataUsers " + "set password = ? where email = ?";
+                    statementTwo = connection.prepareStatement(updatePass);
+                    statementTwo.setString(1, newPass);
+                    statementTwo.setString(2, email);
+                    request.getSession().setAttribute("newPassword", "Your new password is: " + newPass);
+                    dispatcher.forward(request, response);
+
+
                 } else if (userName != null) {
-                    PreparedStatement statement = connection.prepareStatement("UPDATE  dataUsers SET password = "  + "'" + newPass + "'"+ " where user = " + userName);
-                    statement.executeUpdate();
+                    String updatePass = "update gsiWeb.dataUsers " + "set password = ? where user = ?";
+                    statementTwo = connection.prepareStatement(updatePass);
+                    statementTwo.setString(1, newPass);
+                    statementTwo.setString(2, userName);
+                    request.getSession().setAttribute("newPassword", "Your new password is: " + newPass);
+                    dispatcher.forward(request, response);
                 }
 
-                request.getSession().setAttribute("newPassword", "Your new password is: " + newPass);
-                dispatcher.forward(request, response);
+
 
 
 
