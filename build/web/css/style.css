@@ -200,7 +200,7 @@ label{
 .formUser input[type="submit"], .formUser input[type="button"]{
     background-color: #0082A3;
     color: #D7EAEF;
-    width: 100px;
+    width:  auto;
     height: 40px;
     -moz-border-radius:   20px;
     -webkit-border-radius: 20px;

@@ -38,16 +38,16 @@
                             <li> <label> Password </label> <input type="password" name="password"/> </li>
                             <li> <label> Repeat password </label> <input type="password" name="repeatPassword"/></li>
                             <li> <label> Question </label> </li>
-                                <select>
-                                    <option> Your first telephone number </option>
-                                    <option> Your pet's name </option>
-                                    <option> Birth date of your mother/father </option>
-                                    <option> Your favourite place </option>
-                                 </select>
-                            
+                            <select name="question" >
+                                <option> Your first telephone number </option>
+                                <option> Your pet's name </option>
+                                <option> Birth date of your mother/father </option>
+                                <option> Your favourite place </option>
+                            </select>
+
                             <li> <input type="text" name="answer" /> </li>
 
-                            
+
                             <li> <input type="submit" value="register" name="send" /> </li>
                         </ul>
                     </form>

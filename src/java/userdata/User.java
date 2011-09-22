@@ -15,6 +15,8 @@ public class User {
     private String email;
     private String password;
     private String repeatPassword;
+    private String question;
+    private String answer;
 
     public String getUser(){
         return user;
@@ -28,6 +30,12 @@ public class User {
     public String getRepeatPassword(){
         return repeatPassword;
     }
+    public String getQuestion(){
+        return question;
+    }
+    public String getAnswer(){
+        return answer;
+    }
     public void setUser( String user ){
         this.user = user;
     }
@@ -39,6 +47,12 @@ public class User {
     }
     public void setRepeatPassword( String repeatPassword ){
         this.repeatPassword = repeatPassword;
+    }
+    public void setQuestion( String question ){
+        this.question = question;
+    }
+    public void setAnswer( String answer ){
+        this.answer = answer;
     }
 
 

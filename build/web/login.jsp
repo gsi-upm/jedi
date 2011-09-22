@@ -33,6 +33,11 @@
                             <li> <input type="submit" value="login" />
                         </ul>
                     </form>
+                            <form action="forgot.jsp" method="post" name="forgotPass">
+                                <ul>
+                                <li> <input type="submit" value="Password forgotten" /> </li>
+                                </ul>
+                            </form>
                 </div>
             </div>
             <%@include file="/WEB-INF/jspf/footer.jspf" %>

@@ -68,6 +68,7 @@
                             <jsp:setProperty name="error" property="messageError" value="Email incorrect" />
                         </c:if>
 
+
                         <sql:query var="emailCheck">
                             select * from dataUsers
                             where email = ?
@@ -78,8 +79,17 @@
                                 <jsp:setProperty name="error" property="messageError" value="The email address is already registered" />
                             </c:when>
                         </c:choose>
-
                     </c:if>
+
+                            <c:if test="${!emptyAnswer}">
+                                <c:if test="${param.question == 'Your first telephone number'}" >
+                                    <c:set var="correctLength" value="${fn:length(param.answer)}" />
+                                    <c:if test="${ (correctLength != 9 )}" >
+                                        <jsp:setProperty name="error" property="messageError" value="Please, write a correct number" />
+                                    </c:if>
+                                </c:if>
+                                
+                            </c:if>
 
 
                     <!-- Password validation -->

@@ -18,6 +18,8 @@ import javax.servlet.jsp.jstl.sql.Result;
 import javax.servlet.jsp.jstl.sql.ResultSupport;
 
 import java.util.Random;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  *
@@ -75,7 +77,6 @@ public class Database extends HttpServlet {
     private void petitionAux(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         try {
             String action = request.getParameter("action");
-            String secondAction = request.getParameter("secondAction");
             if (action == null) {
                 LOGGER.warning("Action null");
                 return;
@@ -175,6 +176,43 @@ public class Database extends HttpServlet {
                 LOGGER.info("Email user: " + emailUser);
                 RequestDispatcher dispatcher = request.getRequestDispatcher("deleteUser.jsp");
                 dispatcher.forward(request, response);
+            } else if (action.equals("forgotPass")) {
+                RequestDispatcher dispatcher = request.getRequestDispatcher("forgot.jsp");
+                String email = request.getParameter("email");
+                String userName = request.getParameter("username");
+                if (email == null && userName == null) {
+                    request.getSession().setAttribute("messageError", "Please, write your username or your email");
+                    dispatcher.forward(request, response);
+                }
+                //Email validation
+                Pattern pat = null;
+                Matcher mat = null;
+                pat = Pattern.compile("^([0-9a-zA-Z]([_.w]*[0-9a-zA-Z])*@([0-9a-zA-Z][-w]*[0-9a-zA-Z].)+([a-zA-Z]{2,9}.)+[a-zA-Z]{2,3})$");
+                mat = pat.matcher(email);
+                if (!mat.find()) {
+                    request.getSession().setAttribute("messageError", "Please, write your email correctly");
+                }
+                PreparedStatement smt;
+                //New password
+                Random r = new Random();
+                double tempInt = r.nextDouble();
+                tempInt = tempInt * 100000000;
+                tempInt = Math.round(tempInt);
+                String newPass = String.valueOf((int) tempInt);
+                if (email != null) {
+                    PreparedStatement statement = connection.prepareStatement("UPDATE dataUsers SET password = " + "'" + newPass +  "'" + " where email = " + email );
+                    LOGGER.info("UPDATE dataUsers SET password = " + "'" + newPass +  "'" + " where email = " + email );
+                    statement.executeUpdate();
+                } else if (userName != null) {
+                    PreparedStatement statement = connection.prepareStatement("UPDATE  dataUsers SET password = "  + "'" + newPass + "'"+ " where user = " + userName);
+                    statement.executeUpdate();
+                }
+
+                request.getSession().setAttribute("newPassword", "Your new password is: " + newPass);
+                dispatcher.forward(request, response);
+
+
+
             }
 
 

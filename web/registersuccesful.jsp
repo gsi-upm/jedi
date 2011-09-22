@@ -24,19 +24,23 @@
     <c:when test="${gsiWeb.rowCount == 0}">
         <sql:update>
             INSERT INTO dataUsers
-            (user, email, password) VALUES (?,?,?)
+            (user, email, password, question, answer) VALUES (?,?,?,?,?)
             <sql:param value="${param.user}" />
             <sql:param value="${param.email}" />
             <sql:param value="${param.password}" />
+            <sql:param value="${param.question}" />
+            <sql:param value="${param.answer}" />
         </sql:update>
     </c:when>
     <c:otherwise>
         <sql:update>
             UPDATE dataUsers
-            SET email = ?, password = ? WHERE USER = ?
+            SET email = ?, password = ?, question = ?, answer = ? WHERE USER = ?
             <sql:param value="${param.email}" />
             <sql:param value="${param.password}" />
             <sql:param value="${param.user}" />
+            <sql:param value="${param.question}" />
+            <sql:param value="${param.answer}" />
         </sql:update>
     </c:otherwise>
 </c:choose>
