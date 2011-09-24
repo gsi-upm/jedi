@@ -110,12 +110,16 @@ public class Database extends HttpServlet {
 
 
                     String javaFiles = "";
+                    String keyWords = "";
                     for (int i = 0; i < cap.getListFile().size(); i++) {
                         javaFiles = javaFiles + cap.getListFile().get(i).getName() + ';';
 
                     }
+                    for( int i = 0; i < cap.getKeyWords().size(); i++ ){
+                        keyWords = keyWords + cap.getKeyWords().get(i) + ';';
+                    }
 
-                    smt = connection.prepareStatement("INSERT INTO capabilities (NAME,DATEUPLOAD,TIMEUPLOAD, ID,USERUPLOAD, COMMENTS, JAVAFILES, NAMEFOLDER, TIMESDOWNLOADED) VALUES(?,?,?,?,?,?,?,?,?)");
+                    smt = connection.prepareStatement("INSERT INTO capabilities (NAME,DATEUPLOAD,TIMEUPLOAD, ID,USERUPLOAD, COMMENTS, JAVAFILES, NAMEFOLDER, TIMESDOWNLOADED, KEYWORDS) VALUES(?,?,?,?,?,?,?,?,?,?)");
                     smt.setString(1, name);
                     smt.setDate(2, date);
                     smt.setString(3, timeUpload);
@@ -125,6 +129,7 @@ public class Database extends HttpServlet {
                     smt.setString(7, javaFiles);
                     smt.setString(8, nameFolder);
                     smt.setInt(9, 0);
+                    smt.setString(10, keyWords);
                     smt.executeUpdate();
                     LOGGER.severe("Data saved");
 

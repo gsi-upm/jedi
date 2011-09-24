@@ -25,10 +25,27 @@ import java.io.FileOutputStream;
 import java.io.OutputStream;
 import com.ice.tar.TarArchive;
 import javax.servlet.http.HttpSession;
-import javax.xml.parsers.*;
-import org.w3c.dom.*;
 import java.util.*;
 
+import javax.xml.*;
+import javax.xml.stream.XMLInputFactory;
+
+
+
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
+import javax.xml.stream.XMLEventReader;
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.events.Attribute;
+import javax.xml.stream.events.EndElement;
+import javax.xml.stream.events.StartElement;
+import javax.xml.stream.events.XMLEvent;
 
 public class UploadData extends HttpServlet {
 
@@ -164,7 +181,6 @@ public class UploadData extends HttpServlet {
                         } else if (name.equals("uploadfile")) {
                             fileSelected = value;
                             LOGGER.severe("FileUpload: " + fileSelected);
-
                         }
 
                     }
@@ -230,7 +246,7 @@ public class UploadData extends HttpServlet {
             if (file.isFile()) {
                 String filePath = file.getCanonicalPath();
                 if (filePath.endsWith(".xml")) {
-                    getInfoCap(file);
+                    getInfoCap(file, cap);
                 } else if (filePath.endsWith(".java")) {
                     cap.addListFile(file);
                 }
@@ -260,23 +276,32 @@ public class UploadData extends HttpServlet {
      * @return
      * @throws Exception
      */
-    private void getInfoCap(File file) throws Exception {
+    private void getInfoCap(File file, Capabilities cap) throws Exception {
         try {
-            DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
-            DocumentBuilder builder = builderFactory.newDocumentBuilder();
-            Document document = builder.parse(file);
-            LOGGER.info("Nombre file: " + file.getName());
-            document.getDocumentElement().normalize();
-            //Element rootElement = document.getDocumentElement();
-            //String capabilityName = rootElement.getAttribute("name");
-            NodeList nl = document.getElementsByTagName("beliefs");
+            XMLInputFactory inputFactory = XMLInputFactory.newInstance();
+            InputStream in = new FileInputStream(file);
+            XMLEventReader eventReader = inputFactory.createXMLEventReader(in);
 
-            if(nl != null && nl.getLength() > 0) {
-			for(int i = 0 ; i < nl.getLength();i++) {
-                        Element el = (Element)nl.item(i);
-                        LOGGER.info("Belief: " + el.toString());
-			}
-		}
+            while (eventReader.hasNext()) {
+                XMLEvent event = eventReader.nextEvent();
+
+                if (event.isStartElement()) {
+                    StartElement startElement = event.asStartElement();
+
+                    if ((startElement.getName().getLocalPart()).equals("achievegoal")) {
+                        Iterator<Attribute> attributes = startElement.getAttributes();
+                        while (attributes.hasNext()) {
+                            Attribute attribute = attributes.next();
+                            if (attribute.getName().toString().equals("name")) {
+                                //LOGGER.info("Goal Name: " + attribute.getValue());
+                                cap.addKeyWord(attribute.getValue());
+                            }
+                        }
+
+                    }
+                }
+            }
+
 
         } catch (Exception ex) {
             System.out.println("Exception: " + ex.getMessage());
@@ -284,10 +309,6 @@ public class UploadData extends HttpServlet {
         }
 
     }
-
-    
-
-  
 }
 
 

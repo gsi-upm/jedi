@@ -20,6 +20,7 @@ public class Capabilities {
     private String comments;
     private List <File> listFile;
     private String nameFile;
+    private List <String> keyWords;
 
     public Capabilities(){
         this.name = "";
@@ -29,8 +30,10 @@ public class Capabilities {
         this.comments = "";
         this.listFile = new ArrayList<File>();
         this.nameFile = "";
+        this.keyWords = new ArrayList<String>();
     }
-    public Capabilities( String name, String id, java.sql.Date date, String timeUpload, String userUpload, String comments, List <File> listFile, String nameFile ){
+    public Capabilities( String name, String id, java.sql.Date date, String timeUpload, String userUpload, String comments, List <File> listFile, 
+            String nameFile, List <String> keyWords){
         this.name = name;
         this.id = id;
         this.dateUpload = date;
@@ -38,6 +41,7 @@ public class Capabilities {
         this.comments = comments;
         this.listFile = listFile;
         this.nameFile = nameFile;
+        this.keyWords = keyWords;
     }
     
     public String getName(){
@@ -68,6 +72,9 @@ public class Capabilities {
         return nameFile;
     }
 
+    public List <String> getKeyWords(){
+        return keyWords;
+    }
     public void setName( String name ){
         this.name = name;
     }
@@ -96,8 +103,15 @@ public class Capabilities {
         this.nameFile = nameFile;
     }
 
+    public void setKeyWords( List <String> keyWords ){
+        this.keyWords = keyWords;
+    }
+
     public void addListFile( File file ){
         listFile.add(file);
     }
 
+    public void addKeyWord( String keyWord ){
+        keyWords.add(keyWord);
+    }
 }
