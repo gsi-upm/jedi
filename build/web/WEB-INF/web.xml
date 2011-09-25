@@ -9,6 +9,14 @@
         <url-pattern>/UploadData</url-pattern>
     </servlet-mapping>
     <servlet>
+        <servlet-name>Email</servlet-name>
+        <servlet-class>modules.Email</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>Email</servlet-name>
+        <url-pattern>/Email</url-pattern>
+    </servlet-mapping>
+    <servlet>
         <servlet-name>DownloadData</servlet-name>
         <servlet-class>userdata.DownloadData</servlet-class>
     </servlet>

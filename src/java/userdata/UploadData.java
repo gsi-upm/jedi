@@ -282,19 +282,29 @@ public class UploadData extends HttpServlet {
             InputStream in = new FileInputStream(file);
             XMLEventReader eventReader = inputFactory.createXMLEventReader(in);
 
+
+            List<String> interestingWords = new ArrayList<String>();
+            interestingWords.add("achievegoal");
+            interestingWords.add("plan");
+            interestingWords.add("application");
+
             while (eventReader.hasNext()) {
                 XMLEvent event = eventReader.nextEvent();
 
                 if (event.isStartElement()) {
                     StartElement startElement = event.asStartElement();
 
-                    if ((startElement.getName().getLocalPart()).equals("achievegoal")) {
-                        Iterator<Attribute> attributes = startElement.getAttributes();
-                        while (attributes.hasNext()) {
-                            Attribute attribute = attributes.next();
-                            if (attribute.getName().toString().equals("name")) {
-                                //LOGGER.info("Goal Name: " + attribute.getValue());
-                                cap.addKeyWord(attribute.getValue());
+                    for (int i = 0; i < interestingWords.size(); i++) {
+                        if ((startElement.getName().getLocalPart()).equals(interestingWords.get(i))) {
+                            Iterator<Attribute> attributes = startElement.getAttributes();
+                            while (attributes.hasNext()) {
+                                Attribute attribute = attributes.next();
+                                if (attribute.getName().toString().equals("name")) {
+                                    //LOGGER.info("Goal Name: " + attribute.getValue());
+                                    String keyWord = attribute.getValue();
+                                    keyWord = keyWord.replace("_", " ");
+                                    cap.addKeyWord(keyWord);
+                                }
                             }
                         }
 
@@ -309,6 +319,9 @@ public class UploadData extends HttpServlet {
         }
 
     }
+
+
+
 }
 
 
