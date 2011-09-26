@@ -115,7 +115,7 @@ public class Database extends HttpServlet {
                         javaFiles = javaFiles + cap.getListFile().get(i).getName() + ';';
 
                     }
-                    for( int i = 0; i < cap.getKeyWords().size(); i++ ){
+                    for (int i = 0; i < cap.getKeyWords().size(); i++) {
                         keyWords = keyWords + cap.getKeyWords().get(i) + ';';
                     }
 
@@ -143,7 +143,7 @@ public class Database extends HttpServlet {
                 request.setAttribute("resCapabilities", result);
 
 
-                //Looks for a list with the top downloaded capabilities
+                //Look for a list with the top downloaded capabilities
 
                 String count = "SELECT COUNT(*) from capabilities";
                 ResultSet resCount = smt.executeQuery(count);
@@ -167,7 +167,6 @@ public class Database extends HttpServlet {
                 RequestDispatcher dispatcher = request.getRequestDispatcher("upload.jsp");
                 dispatcher.forward(request, response);
             } else if (action.equals("deleteUser")) {
-                PreparedStatement smt;
                 HttpSession session = request.getSession(true);
                 User user = (User) session.getValue("validUser");
                 String nameUser = user.getUser();
@@ -185,19 +184,8 @@ public class Database extends HttpServlet {
                 RequestDispatcher dispatcher = request.getRequestDispatcher("forgot.jsp");
                 String email = request.getParameter("email");
                 String userName = request.getParameter("username");
-                if (email == null && userName == null) {
-                    request.getSession().setAttribute("messageError", "Please, write your username or your email");
-                    dispatcher.forward(request, response);
-                }
-                //Email validation
-                Pattern pat = null;
-                Matcher mat = null;
-                pat = Pattern.compile("^([0-9a-zA-Z]([_.w]*[0-9a-zA-Z])*@([0-9a-zA-Z][-w]*[0-9a-zA-Z].)+([a-zA-Z]{2,9}.)+[a-zA-Z]{2,3})$");
-                mat = pat.matcher(email);
-                if (!mat.find()) {
-                    request.getSession().setAttribute("messageError", "Please, write your email correctly");
-                }
-                PreparedStatement smt;
+
+
                 //New password
                 Random r = new Random();
                 double tempInt = r.nextDouble();
@@ -207,22 +195,50 @@ public class Database extends HttpServlet {
 
 
                 PreparedStatement statementTwo;
-                if (email != null) {
-                    String updatePass = "update gsiWeb.dataUsers " + "set password = ? where email = ?";
-                    statementTwo = connection.prepareStatement(updatePass);
+
+                if (email.equals("") == false) {
+
+                    PreparedStatement sm = connection.prepareStatement("SELECT * FROM dataUsers where email=?");
+                    sm.setString(1, email);
+                    ResultSet resultSet = sm.executeQuery();
+                    if (resultSet.isBeforeFirst() == false) {
+                        request.getSession().setAttribute("messageError", "Your email is not in the database");
+                        dispatcher.forward(request, response);
+                    }
+                    else{
+
+                    statementTwo = connection.prepareStatement("update dataUsers " + "set password =? where email =?");
                     statementTwo.setString(1, newPass);
                     statementTwo.setString(2, email);
+                    statementTwo.executeUpdate();
                     request.getSession().setAttribute("newPassword", "Your new password is: " + newPass);
+                    request.getSession().setAttribute("messageError", "User: " + userName);
                     dispatcher.forward(request, response);
+                    }
 
+                } else if (email.equals("") && userName.equals("")) {
+                    request.getSession().setAttribute("messageError", "Please, write your username or your email");
+                    LOGGER.info("BOTH NULL");
+                    dispatcher.forward(request, response);
+                } else {
 
-                } else if (userName != null) {
-                    String updatePass = "update gsiWeb.dataUsers " + "set password = ? where user = ?";
-                    statementTwo = connection.prepareStatement(updatePass);
+                    PreparedStatement sm = connection.prepareStatement("SELECT * FROM dataUsers where user=?");
+                    sm.setString(1, userName);
+                    ResultSet resultSet = sm.executeQuery();
+                    if (resultSet.isBeforeFirst() == false) {
+                        request.getSession().setAttribute("messageError", "Your username is not in the database");
+                        dispatcher.forward(request, response);
+                    }
+                    else {
+                    statementTwo = connection.prepareStatement("update dataUsers " + "set password =? where user =?");
                     statementTwo.setString(1, newPass);
                     statementTwo.setString(2, userName);
+                    LOGGER.info("QUERY: " + statementTwo.toString());
+                    statementTwo.executeUpdate();
                     request.getSession().setAttribute("newPassword", "Your new password is: " + newPass);
+                    request.getSession().setAttribute("messageError", "User: " + userName);
                     dispatcher.forward(request, response);
+                    }
                 }
 
 

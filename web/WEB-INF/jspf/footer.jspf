@@ -1,6 +1,6 @@
 <div id="footer" class="round">
     <ul>
       <li><a href="#"> About us </a> </li>
-      <li><a href="#"> Contact</a> </li>
+      <li><a href="contact.jsp"> Contact</a> </li>
      </ul>
 </div>

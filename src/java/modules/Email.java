@@ -19,6 +19,9 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 /**
  *
  * @author nachomv
@@ -34,18 +37,24 @@ public class Email extends HttpServlet implements Runnable {
     }
 
     public Email(String hostName) {
+
+        Authenticator authenticator = new Authenticator();
+
         Properties properties = new Properties();
         properties.put("mail.smtp.host", hostName);
-        properties.put("mail.transport.protocol", "smtp");
         properties.put("mail.smtp.auth", true);
-        properties.put("maill.user","ignacio.mendizabal.vazquez@gmail.com");
+        properties.put("mail.smtp.submitter", authenticator.getPasswordAuthentication().getUserName());
         properties.put("mail.smtp.starttls.enable", "true");
-        
 
-        Session session = Session.getDefaultInstance(properties, null);
+        properties.setProperty("mail.smtp.port", "25");
+        properties.put("mail.debug", "true");
+
+
+        Session session = Session.getDefaultInstance(properties, authenticator);
         session.setDebug(true);
 
         mail = new MimeMessage(session);
+
     }
 
     public void setFromAddress(String fromName, String fromAddress) {
@@ -58,13 +67,13 @@ public class Email extends HttpServlet implements Runnable {
         }
     }
 
-    public void setToAddress( String toName, String toAddress ){
-      try{
-        InternetAddress to = new InternetAddress( toAddress, toName );
-        mail.addRecipient( Message.RecipientType.TO, to);
-      } catch( Exception ex ){
-          LOGGER.info("Exception: " + ex.getMessage() );
-      }
+    public void setToAddress(String toName, String toAddress) {
+        try {
+            InternetAddress to = new InternetAddress(toAddress, toName);
+            mail.addRecipient(Message.RecipientType.TO, to);
+        } catch (Exception ex) {
+            LOGGER.info("Exception: " + ex.getMessage());
+        }
 
     }
 
@@ -98,7 +107,7 @@ public class Email extends HttpServlet implements Runnable {
 
     public void run() {
         try {
-            Transport transport = t
+
             Transport.send(mail);
         } catch (Exception ex) {
             LOGGER.info("Exception: " + ex.getMessage());
@@ -113,7 +122,10 @@ public class Email extends HttpServlet implements Runnable {
             test.setToAddress("Nacho", "ignacio.mendizabal.vazquez@gmail.com");
             test.setSubject("Hello World!!");
             test.setBody("Hellooooo!!!");
-           test.send();
+            //test.send();
+            test.send();
+
+
 
 
 
@@ -123,37 +135,62 @@ public class Email extends HttpServlet implements Runnable {
         }
     }
 
-
     @Override
-    public void init( ServletConfig conf ) throws ServletException{
+    public void init(ServletConfig conf) throws ServletException {
         super.init(conf);
 
     }
 
     @Override
-    public void destroy(){
-        try{
-
-        } catch( Exception ex ){
+    public void destroy() {
+        try {
+        } catch (Exception ex) {
             LOGGER.info("Exception: " + ex.getMessage());
-            
+
         }
     }
 
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        petitionAux( request, response );
+        petitionAux(request, response);
     }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        petitionAux( request, response );
+        petitionAux(request, response);
     }
 
-
-    private void petitionAux( HttpServletRequest request, HttpServletResponse response ) throws ServletException, IOException {
+    private void petitionAux(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        LOGGER.info("EMAIL!!!");
+        String email = request.getParameter("email");
+        String subject = request.getParameter("subject");
+        String textEmail = request.getParameter("bodyEmail");
+        if (email == null || subject == null || textEmail == null) {
+            request.getSession().setAttribute("messageError", "Please, write all data correctly");
+        }
+        Pattern pat = null;
+        Matcher mat = null;
+        pat = Pattern.compile("^([0-9a-zA-Z]([_.w]*[0-9a-zA-Z])*@([0-9a-zA-Z][-w]*[0-9a-zA-Z].)+([a-zA-Z]{2,9}.)+[a-zA-Z]{2,3})$");
+        mat = pat.matcher(email);
+        if (!mat.find()) {
+            request.getSession().setAttribute("messageError", "Please, write your email correctly");
+        }
         Main();
     }
 
+    private class Authenticator extends javax.mail.Authenticator {
 
+        private PasswordAuthentication authentication;
+
+        public Authenticator() {
+            String username = "ignacio.mendizabal.vazquez@gmail.com";
+            String password = "AlphaDelta1922";
+            authentication = new PasswordAuthentication(username, password);
+        }
+
+        @Override
+        protected PasswordAuthentication getPasswordAuthentication() {
+            return authentication;
+        }
+    }
 }

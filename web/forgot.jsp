@@ -20,7 +20,7 @@
 
             <div id="main" class="round">
                 <div class="messageError">
-                <p> ${fn:escapeXml(param.messageError)} </p>
+                <p> ${fn:escapeXml(messageError)} </p>
                 <p> ${fn:escapeXml(newPassword)} </p>
                 </div>
                 <p> Please introduce your username or your email </p>
