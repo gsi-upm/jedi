@@ -3,12 +3,12 @@ WebPage.
 
 To run correctly the application, you need:
 
-1) A database called "gsiWeb"
+1) A database called "jediweb"
 2) A table "dataUsers". You can create it in mysql typing:
 
-create table dataUsers(user varchar(50), email varchar(50), password varchar(50) );
+create table dataUsers(user varchar(50), email varchar(50), question varchar(200), password varchar(50), answer varchar(100) );
 
 3) A table "capabilities". You can also create it typing: 
 
-create table capabilities( name varchar(50), dateUpload date, timeupload varchar(50), id varchar(30), userUpload varchar(50), comments varchar(50), javafiles varchar(4294967295), namefolder varchar(100), timesDownload INT, keyWords varchar(600));
+create table capabilities( name varchar(50), dateUpload date, timeupload varchar(50), id varchar(30), userUpload varchar(50), comments varchar(50), javafiles varchar(4294967295), namefolder varchar(100), timesdownloaded INT,  keyWords varchar(600));
 
