@@ -27,6 +27,8 @@
 
 
 <html>
+
+    
     <%@include file="/WEB-INF/jspf/tagCloud.jspf" %>
 
     <div id="topRatingCaps" class="formUser">
@@ -78,6 +80,10 @@
                                 </select>
                             </c:when>
                             <c:otherwise>
+                                <div class="messageError">
+                                    <p>    ${fn:escapeXml(messageError)}</p>
+                                </div>
+
                                 <form name="formCap" method="post" action="DownloadData" class="formUser">
                                     <div id="selectOption">
                                         <p> Capabilities </p>
@@ -91,13 +97,12 @@
                                                         <option class="selectSecondClass" ondblclick="addSelect( formCap.capListName.options[formCap.capListName.selectedIndex].value )"> ${capability.name}  </option>
                                                     </c:otherwise>
                                                 </c:choose>
-
                                             </c:forEach>
                                         </select>
                                         <p> Download </p>
                                         <select name="capsSelected" multiple size="4" class="selectForm download">
                                         </select>
-                                        <input type="hidden" name="listParameters" id="listParameters" value="empty"/>
+                                        <input type="hidden" name="listParameters" id="listParameters" />
                                     </div>
                                     <input type="button" value="Add" onClick="addSelect( formCap.capListName.options[formCap.capListName.selectedIndex].value )" />
                                     <input type="button" value="Delete" onClick="deleteSelext( formCap.capsSelected.selectedIndex)" />
@@ -120,30 +125,30 @@
 
 <script language="javascript" type="text/javascript">
     function addSelect( text ){
-        var option1 = new Option(text,"textOption","","");
-        var select = document.formCap.capsSelected;
+    var option1 = new Option(text,"textOption","","");
+    var select = document.formCap.capsSelected;
 
-        var lengthCapsSelect = document.formCap.capsSelected.length;
-        var alreadyInTheList = false;
-        for(i=0;i<lengthCapsSelect;i++){
+    var lengthCapsSelect = document.formCap.capsSelected.length;
+    var alreadyInTheList = false;
+    for(i=0;i<lengthCapsSelect;i++){
 
-            if( document.formCap.capsSelected.options[i].text == text ){
-                alreadyInTheList = true;
-            }
-        }
-        if( alreadyInTheList == false ){
-            select.appendChild(option1);
-            document.getElementById("listParameters").value += text;
-            document.getElementById("listParameters").value += ',';
-        }
+    if( document.formCap.capsSelected.options[i].text == text ){
+    alreadyInTheList = true;
+    }
+    }
+    if( alreadyInTheList == false ){
+    select.appendChild(option1);
+    document.getElementById("listParameters").value += text;
+    document.getElementById("listParameters").value += ',';
+    }
     }
 
     function deleteSelext( selected){
-        var mySelect = document.forms['formCap'].elements['capsSelected'];
-        mySelect.options[selected] = null;
+    var mySelect = document.forms['formCap'].elements['capsSelected'];
+    mySelect.options[selected] = null;
     }
 
-      
+
 
 </script>
 

@@ -8,10 +8,8 @@
     background: #fff;
     margin:auto;
     float:right;
-    padding:10px;
-    
+    padding:10px;    
 }
-
 
 #header img {
     background: #fff;
@@ -28,7 +26,7 @@
 #main{
     margin-top: 10px;
     padding:10px;
-    background: #fff;
+    background: #fff;   
 }
 
 .titleBlock{
@@ -36,13 +34,11 @@
     color: #0082A3;
 }
 
-
 /* download page */
 
 .selectForm{   
     background-color: white;
-    font-size: 20px;
-    
+    font-size: 20px;    
 }
 
 .download{
@@ -55,22 +51,21 @@
     color:white;
 }
 
-.selectSecondClass{
-    
-  
-    
-}
+
+
 
 /* tagcloud */
 #tagCloud{
-    width:300px;
-    height: auto;
+    width:220px;
+    height: 280px auto;
     float:right;
     margin: auto;
     margin-top:200px;
     background-color: white;
+    padding: 20px;
     
 }
+
 
 #tagcloud ul li{
     list-style-type: none;

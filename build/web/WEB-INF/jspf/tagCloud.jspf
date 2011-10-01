@@ -1,44 +1,31 @@
-<%@ page import="org.mcavallo.opencloud.*" %>
+<script type="text/javascript" src="js/jquery-1.2.6.min.js"></script>
+<script type="text/javascript" src="js/jquery.tagcloud.min.js"></script>
+<script type="text/javascript" src="js/jquery.tinysort.min.js"></script>
+<script type="text/javascript" src="js/jquery.tagcloud.js"> </script>
+<script type="text/javascript" src="js/tagCloudJedi.js"> </script>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="sql" uri="http://java.sun.com/jsp/jstl/sql" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+
+<sql:query var="keyWords">
+    SELECT * from capabilities;
+</sql:query>
 <div id="tagCloud" class="round">
-    <ul>
-        <div>
-            <%
+    
+    <ul id="cloud">
+        <li value="10"> Jadex </li>
+        <li value="15"> Intelligent Systems Group </li>
+        <li value="40"> Jadex Editor </li>
+        <li value="50"> Capabilities </li>
 
-
-                        Cloud cloud = new Cloud();
-                        cloud.setMaxTagsToDisplay(50);
-                        cloud.setMaxWeight(40.0);
-                        cloud.setMinWeight(20.0);
-
-                        cloud.addTag(new Tag("Development", "#", 2.5));
-                        cloud.addTag(new Tag("Programming", "#", 1));
-                        cloud.addTag(new Tag("Open Source", "#", 2));
-                        cloud.addTag(new Tag("Jadex", "#", 2.5));
-                        cloud.addTag(new Tag("JEDI", "#", 5));
-                        cloud.addTag(new Tag("Jadex Editor", "#", 1.6));
-                        cloud.addTag(new Tag("Eclipse", "#", 2.3));
-                        cloud.addTag(new Tag("Capabilities", "#", 2.4));
-                        cloud.addTag(new Tag("Java", "#", 1.7));
-                        cloud.addTag(new Tag("Agents", "#", 1.1));
-                        cloud.addTag(new Tag("Intelligent Systems Group", "#", 3.2));
-                        cloud.addTag(new Tag("Upload", "#", 2.3));
-                        cloud.addTag(new Tag("Download", "#", 2.3));
-                        cloud.addTag(new Tag("Intelligent agents", "#", 2.3));
-                        cloud.addTag(new Tag("Belief Desire Intention", "#", 3));
-                        cloud.addTag(new Tag("BDI", "#", 3));
-                        cloud.addTag(new Tag("Belief Desire Intention", "#", 3));
-                        cloud.addTag(new Tag("GSI", "#", 5));
-                        cloud.addTag(new Tag("DIT", "#", 3));
-                        cloud.addTag(new Tag("UPM", "#", 2));
-            %>
-            <%
-                        for (Tag tag : cloud.tags()) {
-
-            %>
-            <a href="<%= tag.getLink()%>" style="font-size: <%= tag.getWeightInt()%>px;"><%= tag.getName()%></a>
-
-            <% }%>
-        </div> 
+        <c:forEach var="importantWords" items="${keyWords.rows}" varStatus="wordCounter">
+            <c:set var="stringTemp" value="${importantWords.keywords}" />
+            <c:forEach var="wordsSeparated" items="${fn:split(stringTemp, ';')}" >
+                <li> <c:out value="${wordsSeparated}" /> </li>
+            </c:forEach>
+        </c:forEach>
     </ul>
+    
 </div>

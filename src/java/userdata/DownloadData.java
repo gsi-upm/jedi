@@ -52,7 +52,8 @@ public class DownloadData extends HttpServlet {
             Class.forName("com.mysql.jdbc.Driver");
             String urlPath = getServletContext().getRealPath(urlJDBC);
             if (connection == null) {
-                connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/gsiWeb", "root", "root");
+                connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/jediweb", "jediweb", "LM8h36FCeTCD9vxh");
+
             }
         } catch (SQLException exSQL) {
             LOGGER.severe("Error creating the connection " + exSQL.getMessage());
@@ -110,11 +111,8 @@ public class DownloadData extends HttpServlet {
                 request.setAttribute("messageError", "Please select a minimun of one capability to download");
                 RequestDispatcher dispatcher = request.getRequestDispatcher("Database?action=showData");
                 dispatcher.forward(request, response);
-                LOGGER.info("Estoy aquiiii");
             }
             else{
-
-
 
 
             String[] listCapabilities = listParam.split(",");
@@ -134,7 +132,6 @@ public class DownloadData extends HttpServlet {
                 ResultSet result = smt.executeQuery(query);
 
                 while (result.next()) {
-                    LOGGER.info("Times downloaded for capability " + listCapabilities[i] + " " + result.getInt("timesDownloaded"));
                     PreparedStatement queryTimes = connection.prepareStatement("UPDATE capabilities set timesDownloaded = ? WHERE name = ?");
                     queryTimes.setInt(1, ((result.getInt("timesDownloaded")) + 1));
                     queryTimes.setString(2, listCapabilities[i]);

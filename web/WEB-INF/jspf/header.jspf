@@ -9,7 +9,7 @@
 
       <c:choose>
       <c:when test="${validUser == null}">
-           <li><a href="<c:url value="login.jsp" />"> Log in</a> </li>
+           <li><a href="<c:url value="login.jsp"/>"> Log in</a> </li>
            <li><a href="<c:url value="register.jsp" />"> Register </a> </li>
 
       </c:when>

@@ -549,6 +549,7 @@ exists or setup the property manually. For example like this:
         <copyfiles files="${file.reference.opencloud.jar}" iftldtodir="${build.web.dir}/WEB-INF" todir="${dist.ear.dir}/lib"/>
         <copyfiles files="${file.reference.stax-1.2.0.jar}" iftldtodir="${build.web.dir}/WEB-INF" todir="${dist.ear.dir}/lib"/>
         <copyfiles files="${file.reference.mail.jar}" iftldtodir="${build.web.dir}/WEB-INF" todir="${dist.ear.dir}/lib"/>
+        <copyfiles files="${file.reference.gson-1.7.1.jar}" iftldtodir="${build.web.dir}/WEB-INF" todir="${dist.ear.dir}/lib"/>
         <copyfiles files="${file.reference.jedi-lib}" todir="${build.web.dir}//"/>
         <mkdir dir="${build.web.dir}/META-INF"/>
         <manifest file="${build.web.dir}/META-INF/MANIFEST.MF" mode="update"/>
@@ -576,6 +577,7 @@ exists or setup the property manually. For example like this:
         <copyfiles files="${file.reference.opencloud.jar}" todir="${build.web.dir}/WEB-INF/lib"/>
         <copyfiles files="${file.reference.stax-1.2.0.jar}" todir="${build.web.dir}/WEB-INF/lib"/>
         <copyfiles files="${file.reference.mail.jar}" todir="${build.web.dir}/WEB-INF/lib"/>
+        <copyfiles files="${file.reference.gson-1.7.1.jar}" todir="${build.web.dir}/WEB-INF/lib"/>
         <copyfiles files="${file.reference.jedi-lib}" todir="${build.web.dir}//"/>
     </target>
     <target depends="init" if="dist.ear.dir" name="-clean-webinf-lib">

@@ -18,8 +18,6 @@ import javax.servlet.jsp.jstl.sql.Result;
 import javax.servlet.jsp.jstl.sql.ResultSupport;
 
 import java.util.Random;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  *
@@ -29,7 +27,6 @@ public class Database extends HttpServlet {
 
     private Connection connection;
     private static final Logger LOGGER = Logger.getLogger(Database.class.getName());
-    private static final String DESTINATION_DIR_PATH = "/files";
 
     @Override
     public void init(ServletConfig conf) throws ServletException {
@@ -41,9 +38,8 @@ public class Database extends HttpServlet {
 
         try {
             Class.forName("com.mysql.jdbc.Driver");
-            String urlPath = getServletContext().getRealPath(urlJDBC);
             if (connection == null) {
-                connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/gsiWeb", "root", "root");
+                connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/jediweb", "jediweb", "LM8h36FCeTCD9vxh");
             }
         } catch (SQLException exSQL) {
             LOGGER.severe("Error creating the connection " + exSQL.getMessage());
@@ -74,6 +70,13 @@ public class Database extends HttpServlet {
         petitionAux(request, response);
     }
 
+    /**
+     * Handle get and post petitionsº
+     * @param request
+     * @param response
+     * @throws ServletException
+     * @throws IOException
+     */
     private void petitionAux(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         try {
             String action = request.getParameter("action");
@@ -204,16 +207,21 @@ public class Database extends HttpServlet {
                     if (resultSet.isBeforeFirst() == false) {
                         request.getSession().setAttribute("messageError", "Your email is not in the database");
                         dispatcher.forward(request, response);
-                    }
-                    else{
+                    } else {
 
-                    statementTwo = connection.prepareStatement("update dataUsers " + "set password =? where email =?");
-                    statementTwo.setString(1, newPass);
-                    statementTwo.setString(2, email);
-                    statementTwo.executeUpdate();
-                    request.getSession().setAttribute("newPassword", "Your new password is: " + newPass);
-                    request.getSession().setAttribute("messageError", "User: " + userName);
-                    dispatcher.forward(request, response);
+                        statementTwo = connection.prepareStatement("update dataUsers " + "set password =? where email =?");
+                        statementTwo.setString(1, newPass);
+                        statementTwo.setString(2, email);
+                        statementTwo.executeUpdate();
+                        //Looks for the username
+                        String lookForUser = "SELECT user from dataUsers where email=" + "'" + email + "'";
+                        ResultSet resultSetTwo = statementTwo.executeQuery(lookForUser);
+                        while (resultSetTwo.next()) {
+                            userName = resultSetTwo.getString("user");
+                        }
+                        request.getSession().setAttribute("newPassword", "Your new password is: " + newPass);
+                        request.getSession().setAttribute("messageError", "User: " + userName);
+                        dispatcher.forward(request, response);
                     }
 
                 } else if (email.equals("") && userName.equals("")) {
@@ -228,23 +236,17 @@ public class Database extends HttpServlet {
                     if (resultSet.isBeforeFirst() == false) {
                         request.getSession().setAttribute("messageError", "Your username is not in the database");
                         dispatcher.forward(request, response);
-                    }
-                    else {
-                    statementTwo = connection.prepareStatement("update dataUsers " + "set password =? where user =?");
-                    statementTwo.setString(1, newPass);
-                    statementTwo.setString(2, userName);
-                    LOGGER.info("QUERY: " + statementTwo.toString());
-                    statementTwo.executeUpdate();
-                    request.getSession().setAttribute("newPassword", "Your new password is: " + newPass);
-                    request.getSession().setAttribute("messageError", "User: " + userName);
-                    dispatcher.forward(request, response);
+                    } else {
+                        statementTwo = connection.prepareStatement("update dataUsers " + "set password =? where user =?");
+                        statementTwo.setString(1, newPass);
+                        statementTwo.setString(2, userName);
+                        LOGGER.info("QUERY: " + statementTwo.toString());
+                        statementTwo.executeUpdate();
+                        request.getSession().setAttribute("newPassword", "Your new password is: " + newPass);
+                        request.getSession().setAttribute("messageError", "User: " + userName);
+                        dispatcher.forward(request, response);
                     }
                 }
-
-
-
-
-
             }
 
 
@@ -252,7 +254,6 @@ public class Database extends HttpServlet {
             LOGGER.info("Error Insert " + ex.getMessage());
             throw new ServletException("SQL Insert " + ex.getMessage());
         }
-
     }
 
     /**

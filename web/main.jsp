@@ -8,13 +8,14 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
     "http://www.w3.org/TR/html4/loose.dtd">
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
 <html>
 
 
 
- <%@include file="/WEB-INF/jspf/tagCloud.jspf" %>
-    <div class="container">
+<%@include file="/WEB-INF/jspf/tagCloud.jspf" %> 
+   <div class="container">
         <head>
             <%@include file="/WEB-INF/jspf/header.jspf" %>
             <link href="css/style.css" rel="stylesheet" type="text/css" media="screen" />
