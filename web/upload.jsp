@@ -25,7 +25,7 @@
         <head>
             <%@include file="/WEB-INF/jspf/header.jspf" %>
             <link href="css/style.css" rel="stylesheet" type="text/css" media="screen" />
-                <link href="css/token-input-facebook.css" rel="stylesheet" type="text/css" media="screen" />
+            <link href="css/token-input-facebook.css" rel="stylesheet" type="text/css" media="screen" />
         </head>
 
         <body>
@@ -50,16 +50,18 @@
                     <ul>
                         <li> <label> Name </label> <input type="text"  id="nameCap" name="nameCap" /> </li>
                         <li> <label> Description </label> <textarea cols="40" rows="5" id="comments" name="comments"  > </textarea> </li>
-                        <li> <label> Tags </label> <input type="text" id="tags" name="tags" /> </li>
+                        <div class="tags">
+                            <li> <label> Tags </label> <input type="text" id="tags" name="tags" /> </li>
+                        </div>
                         <li> <label> Select a file to upload (Max size: 10MB)</label> <input type="file" id="uploadfile" name="uploadfile"  /> </li>
                         <li> <input type="hidden" name="todo" value="upload" /> </li>
                         <li> <input type="submit" value="Upload" /> </li>
                     </ul>
 
                     <script type="text/javascript">
-                       $(document).ready(function(){
-                        $("#tags").tokenInput("AutoComplete", {theme: "facebook"});
-                       });
+                        $(document).ready(function(){
+                            $("#tags").tokenInput("AutoComplete", {theme: "facebook"});
+                        });
                         
 
                     </script>

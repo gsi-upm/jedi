@@ -111,67 +111,65 @@ public class DownloadData extends HttpServlet {
                 request.setAttribute("messageError", "Please select a minimun of one capability to download");
                 RequestDispatcher dispatcher = request.getRequestDispatcher("Database?action=showData");
                 dispatcher.forward(request, response);
-            }
-            else{
+            } else {
 
 
-            String[] listCapabilities = listParam.split(",");
+                String[] listCapabilities = listParam.split(",");
 
 
-            List<String> names = new ArrayList();
-            List<File> listFiles = new ArrayList();
-            for (int i = 0; i < listCapabilities.length; i++) {
-                names.add(listCapabilities[i]);
-                String filePath = getServletContext().getRealPath("/files") + '/' + names.get(i).toLowerCase() + ".tar.gz" + '/' + names.get(i).toLowerCase();
-                LOGGER.info("Nombre cap: " + names.get(i));
-                listFiles.add(new File(filePath));
+                List<String> names = new ArrayList();
+                List<File> listFiles = new ArrayList();
+                for (int i = 0; i < listCapabilities.length; i++) {
+                    names.add(listCapabilities[i]);
+                    String filePath = getServletContext().getRealPath("/files") + '/' + names.get(i).toLowerCase() + ".tar.gz" + '/' + names.get(i).toLowerCase();
+                    LOGGER.info("Nombre cap: " + names.get(i));
+                    listFiles.add(new File(filePath));
 
-                //Increments downloadTimes index of each capability downloaded
-                String query = "SELECT timesDownloaded from capabilities WHERE name=" + "'" + listCapabilities[i] + "'";
-                Statement smt = connection.createStatement();
-                ResultSet result = smt.executeQuery(query);
+                    //Increments downloadTimes index of each capability downloaded
+                    String query = "SELECT timesDownloaded from capabilities WHERE name=" + "'" + listCapabilities[i] + "'";
+                    Statement smt = connection.createStatement();
+                    ResultSet result = smt.executeQuery(query);
 
-                while (result.next()) {
-                    PreparedStatement queryTimes = connection.prepareStatement("UPDATE capabilities set timesDownloaded = ? WHERE name = ?");
-                    queryTimes.setInt(1, ((result.getInt("timesDownloaded")) + 1));
-                    queryTimes.setString(2, listCapabilities[i]);
-                    queryTimes.executeUpdate();
-                    queryTimes.close();
+                    while (result.next()) {
+                        PreparedStatement queryTimes = connection.prepareStatement("UPDATE capabilities set timesDownloaded = ? WHERE name = ?");
+                        queryTimes.setInt(1, ((result.getInt("timesDownloaded")) + 1));
+                        queryTimes.setString(2, listCapabilities[i]);
+                        queryTimes.executeUpdate();
+                        queryTimes.close();
+                    }
                 }
-            }
 
-            String fileTemp = getServletContext().getRealPath("/files") + "/temp/";
-            String filePath = fileTemp + "compress";
+                String fileTemp = getServletContext().getRealPath("/files") + "/temp/";
+                String filePath = fileTemp + "compress";
 
-            Calendar calendar = Calendar.getInstance();
-            int hour = calendar.get(Calendar.HOUR_OF_DAY);
-            int minutes = calendar.get(Calendar.MINUTE);
-            int seconds = calendar.get(Calendar.SECOND);
-            String time = String.valueOf(hour) + String.valueOf(minutes) + String.valueOf(seconds);
-
-
-            for (int i = 0; i < listFiles.size(); i++) {
-                File fileDestTemp = new File(filePath + '/' + names.get(i));
-                copyDirectory(listFiles.get(i), fileDestTemp);
-            }
-            String aux = "capabilities" + time + ".tar.gz";
-            String nameFile = fileTemp + aux;
-            createTarGzOfDirectory(filePath, nameFile);
+                Calendar calendar = Calendar.getInstance();
+                int hour = calendar.get(Calendar.HOUR_OF_DAY);
+                int minutes = calendar.get(Calendar.MINUTE);
+                int seconds = calendar.get(Calendar.SECOND);
+                String time = String.valueOf(hour) + String.valueOf(minutes) + String.valueOf(seconds);
 
 
-            FileInputStream archivo = new FileInputStream(nameFile);
-            int longitud = archivo.available();
-            byte[] datos = new byte[longitud];
-            archivo.read(datos);
-            archivo.close();
+                for (int i = 0; i < listFiles.size(); i++) {
+                    File fileDestTemp = new File(filePath + '/' + names.get(i));
+                    copyDirectory(listFiles.get(i), fileDestTemp);
+                }
+                String aux = "capabilities" + time + ".tar.gz";
+                String nameFile = fileTemp + aux;
+                createTarGzOfDirectory(filePath, nameFile);
 
-            response.setContentType("application/octet-stream");
-
-            ServletOutputStream ouputStream = response.getOutputStream();
-            ouputStream.write(datos);
-            ouputStream.flush();
-            ouputStream.close();
-
+              
+                FileInputStream fileToDownload = new FileInputStream(nameFile);
+                ServletOutputStream out = response.getOutputStream();
+                response.setContentType("application/zip");
+                response.setHeader("Content-Disposition", "attachment; filename=" + aux);
+                response.setContentLength(fileToDownload.available());
+                int c;
+                while ((c = fileToDownload.read()) != -1) {
+                    out.write(c);
+                }
+                out.flush();
+                out.close();
+                fileToDownload.close();
 
 
 

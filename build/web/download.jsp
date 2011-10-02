@@ -65,7 +65,7 @@
         <body>
             <c:if test="${validUser == null}" >
                 <jsp:forward page="login.jsp">
-                    <jsp:param name="origUrL" value="${pageContext.request.requestURL}" />
+                    <jsp:param name="origUrL" value="Database?action=showData" />
                     <jsp:param name="messageError" value="Please log in first" />
                 </jsp:forward>
             </c:if>
