@@ -48,6 +48,11 @@ public class UploadData extends HttpServlet {
     private static final String DESTINATION_DIR_PATH = "/files";
     private File destinationDir;
 
+    /**
+     * It looks if folder 'files' exists and inits the servlet
+     * @param config
+     * @throws ServletException
+     */
     @Override
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
@@ -62,6 +67,13 @@ public class UploadData extends HttpServlet {
         }
     }
 
+    /**
+     * Handle GET requests
+     * @param request
+     * @param response
+     * @throws ServletException
+     * @throws IOException
+     */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         try {
@@ -71,6 +83,13 @@ public class UploadData extends HttpServlet {
         }
     }
 
+    /**
+     * Handle POST requests
+     * @param request
+     * @param response
+     * @throws ServletException
+     * @throws IOException
+     */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         try {
@@ -80,15 +99,25 @@ public class UploadData extends HttpServlet {
         }
     }
 
+    /**
+     * Handles GET and POST requests
+     * @param request
+     * @param response
+     * @throws ServletException
+     * @throws IOException
+     */
     private void helpGetPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         response.setContentType("text/html");
+
         boolean isMultiPart = ServletFileUpload.isMultipartContent(request);
         if (isMultiPart) {
             request.setCharacterEncoding("UTF-8");
+            
             String comments = "";
             String nameCap = "";
             String fileSelected = "";
             String nameFolder = "";
+            String listTagsTemp = "";
 
             DiskFileItemFactory fileItemFactory = new DiskFileItemFactory();
             fileItemFactory.setSizeThreshold(10 * 1024 * 1024); //10 MB
@@ -143,15 +172,8 @@ public class UploadData extends HttpServlet {
                             c.setListFile(listFiles);
                             c.setUserUpload(userName);
                             c.setNameFile(nameFolder);
-
-                            //Takes the name of the capabilitiy and java files assciated
+                            //Takes a list of java files associated
                             infoCapabilitie(file, c);
-
-                            RequestDispatcher dispatcher = request.getRequestDispatcher("Database" + "?" + "action" + "=" + "saveData");
-                            LOGGER.severe("Redirecting");
-                            request.getSession().setAttribute("messageError", "");
-                            request.getSession().setAttribute("capabilitie", c);
-                            dispatcher.forward(request, response);
                         } else {
                             RequestDispatcher dispatcher = request.getRequestDispatcher("Database" + "?" + "action" + "=" + "emptyFile");
                             LOGGER.severe("Redirecting");
@@ -159,6 +181,7 @@ public class UploadData extends HttpServlet {
                             dispatcher.forward(request, response);
 
                         }
+                        //Takes info from forms
                     } else {
                         String name = item.getFieldName();
                         String value = item.getString();
@@ -173,13 +196,21 @@ public class UploadData extends HttpServlet {
                             c.setName(name);
                         } else if (name.equals("uploadfile")) {
                             fileSelected = value;
-                            LOGGER.severe("FileUpload: " + fileSelected);
+                        } //Tags added by user
+                        else if (name.equals("listTags")) {
+                            listTagsTemp = value;                                                       
+                            String tagsUser[] = listTagsTemp.split(";");
+                            for (int i = 0; i < tagsUser.length; i++) {
+                                c.addKeyWord(tagsUser[i]);
+                            }
                         }
-
                     }
-
-
                 }
+                RequestDispatcher dispatcher = request.getRequestDispatcher("Database" + "?" + "action" + "=" + "saveData");
+                LOGGER.severe("Redirecting");
+                request.getSession().setAttribute("messageError", "");
+                request.getSession().setAttribute("capabilitie", c);
+                dispatcher.forward(request, response);
 
 
             } catch (FileUploadException ex) {
@@ -312,9 +343,6 @@ public class UploadData extends HttpServlet {
         }
 
     }
-
-
-
 }
 
 

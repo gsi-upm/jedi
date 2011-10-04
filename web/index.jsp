@@ -24,7 +24,7 @@ Author     : nachomv
 
 
 <html>
-    <%@include file="/WEB-INF/jspf/tagCloud.jspf" %>
+    
     <div class="container">
         <head>
             <%@include file="/WEB-INF/jspf/header.jspf" %>

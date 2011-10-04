@@ -21,6 +21,7 @@ public class Capabilities {
     private List <File> listFile;
     private String nameFile;
     private List <String> keyWords;
+    private String stringAux;
 
     public Capabilities(){
         this.name = "";
@@ -31,9 +32,10 @@ public class Capabilities {
         this.listFile = new ArrayList<File>();
         this.nameFile = "";
         this.keyWords = new ArrayList<String>();
+        this.stringAux = "";
     }
     public Capabilities( String name, String id, java.sql.Date date, String timeUpload, String userUpload, String comments, List <File> listFile, 
-            String nameFile, List <String> keyWords){
+            String nameFile, List <String> keyWords, String stringAux){
         this.name = name;
         this.id = id;
         this.dateUpload = date;
@@ -72,9 +74,12 @@ public class Capabilities {
         return nameFile;
     }
 
+    
     public List <String> getKeyWords(){
         return keyWords;
     }
+
+
     public void setName( String name ){
         this.name = name;
     }
@@ -106,6 +111,8 @@ public class Capabilities {
     public void setKeyWords( List <String> keyWords ){
         this.keyWords = keyWords;
     }
+
+  
 
     public void addListFile( File file ){
         listFile.add(file);

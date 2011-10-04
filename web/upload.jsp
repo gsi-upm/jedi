@@ -15,12 +15,19 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
 <html>
-
+    <!--<%@include file="/WEB-INF/jspf/tagCloud.jspf" %>-->
     <script type="text/javascript" src="js/jquery.min.js"> </script>
     <script type="text/javascript" src="js/jquery.tokeninput.js"> </script>
+    <!-- Add autocomplete function to tags form-->
+    <script type="text/javascript">
+        $(document).ready(function(){
+            $("#tags").tokenInput("AutoComplete", {theme: "facebook"});
+        });
+    </script>
 
 
-    <%--<%@include file="/WEB-INF/jspf/tagCloud.jspf" %>--%>
+
+
     <div class="container">
         <head>
             <%@include file="/WEB-INF/jspf/header.jspf" %>
@@ -50,21 +57,19 @@
                     <ul>
                         <li> <label> Name </label> <input type="text"  id="nameCap" name="nameCap" /> </li>
                         <li> <label> Description </label> <textarea cols="40" rows="5" id="comments" name="comments"  > </textarea> </li>
-                        <div class="tags">
+                        <div id="tagsText">
                             <li> <label> Tags </label> <input type="text" id="tags" name="tags" /> </li>
                         </div>
+                        <div id="newTag">
+                            <li> <label> Add a new tag </label> <input type="text" name="addTag" id="addTag" /> </li>
+                            <input type="button" onclick="addNewTag()" value="Add a new tag" />
+                        </div>
+
                         <li> <label> Select a file to upload (Max size: 10MB)</label> <input type="file" id="uploadfile" name="uploadfile"  /> </li>
-                        <li> <input type="hidden" name="todo" value="upload" /> </li>
-                        <li> <input type="submit" value="Upload" /> </li>
+                        <input type="hidden" name="listTags" id="listTags" />
+                        <li> <input type="submit" value="Upload" onclick="buildTags()"/> </li>
                     </ul>
 
-                    <script type="text/javascript">
-                        $(document).ready(function(){
-                            $("#tags").tokenInput("AutoComplete", {theme: "facebook"});
-                        });
-                        
-
-                    </script>
 
                 </form>
             </div>
@@ -72,3 +77,49 @@
         </body>
     </div>
 </html>
+
+
+
+<script type="text/javascript">
+    /*  buildTags:
+     *   It makes a list with all tags clicked and put them together in a string
+     */
+    function addNewTag(){
+        var nodeTags = document.getElementById("tagsText").getElementsByTagName("ul");
+        var ulTags = nodeTags[0];
+        var li = document.createElement("li");
+        li.setAttribute("class", "token-input-token-facebook");
+        
+        var span = document.createElement("span")
+        span.setAttribute("class", "token-input-delete-token-facebook");
+        var x = document.createTextNode("x");
+        span.appendChild(x);
+        
+        var p = document.createElement("p");
+        var newTag = document.getElementById("addTag");
+        var textTag = document.createTextNode( newTag.value );
+        p.appendChild( textTag );
+        li.appendChild( p );
+        li.appendChild( span );
+        
+        ulTags.appendChild(li);
+        
+
+    }
+
+    function buildTags(){
+        tags = "";
+        var nodeTags = document.getElementById("tagsText").getElementsByTagName('p');
+        if( nodeTags == null ){
+            document.getElementById("listTags").value += "";
+            return tags;
+        }
+        else{
+            for( i = 0; i < nodeTags.length; i++ ){
+                tags = tags + nodeTags[i].textContent + ';';
+            }
+            document.getElementById("listTags").value += tags;
+        }
+        return tags;
+    }
+</script>
