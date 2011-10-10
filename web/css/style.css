@@ -2,20 +2,26 @@
 
 #header {
     padding-top: 20px;
+    height: 100%;
 }
 
 #header ul{
     background: #fff;
     margin:auto;
     float:right;
-    padding:10px;    
+    padding:10px;
+    width: 600px;
 }
 
 #header img {
     background: #fff;
     margin-top: 10px;
-    width: 710px;
+    width: 800px;
+    padding: 10px;
+   
 }
+
+
 
 .linksHeader{
     text-align:center;
@@ -24,9 +30,10 @@
 /* main */
 
 #main{
+    width: 800px;
     margin-top: 10px;
     padding:10px;
-    background: #fff;   
+    background: #fff;
 }
 
 .titleBlock{
@@ -36,9 +43,9 @@
 
 /* download page */
 
-.selectForm{   
+.selectForm{
     background-color: white;
-    font-size: 20px;    
+    font-size: 20px;
 }
 
 .download{
@@ -56,14 +63,14 @@
 
 /* tagcloud */
 #tagCloud{
-    width:220px;
+    width:200px;
     height: 500px auto;
     float:right;
     margin: auto;
     margin-top:200px;
     background-color: white;
     padding: 20px;
-    
+
 }
 
 
@@ -78,8 +85,14 @@
     float:right;
     background:#fff;
     margin-top:20px;
+    margin-right: 200px;
 }
 
+#footer ul li{
+    float:left;
+    margin-right:10px;
+    padding-bottom: 10px;
+}
 
 /* Round corners */
 
@@ -209,7 +222,7 @@ label{
     border-color: #2345A3;
     margin-top:20px;
     width:200px ;
-    
+
 }
 
 #select option{
@@ -228,14 +241,21 @@ label{
     width:150px;
     float:left;
     margin-top: 200px;
-    margin-left:50px;
-  
-       -moz-border-radius:   20px;
+    margin-left:30px;
+
+    -moz-border-radius:   20px;
     -webkit-border-radius: 20px;
     border-radius:      20px;
+    padding-bottom: 50px;
 
 
+}
 
+#topRatingCaps ul{
+    list-style: decimal;
+}
+#topRatingCaps li{
+    float: left;
 }
 
 /* Navigation */
@@ -248,7 +268,7 @@ nav {
 }
 
 ul li {
-    list-style-type: none;
+   
     display: inline-block;
 }
 

@@ -57,21 +57,33 @@ public class DownloadData extends HttpServlet {
             }
         } catch (SQLException exSQL) {
             LOGGER.severe("Error creating the connection " + exSQL.getMessage());
-            throw new ServletException(exSQL.getMessage());
+            //throw new ServletException(exSQL.getMessage());
         } catch (ClassNotFoundException exClass) {
             LOGGER.severe("Error loading the Driver " + exClass.getMessage());
-            throw new ServletException(exClass.getMessage());
+            //throw new ServletException(exClass.getMessage());
         }
     }
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        helpDoPost(request, response);
+        try{
+            helpDoPost(request, response);
+        }
+        catch( Exception ex ){
+            LOGGER.info("Exception ex: " + ex.getMessage());
+            handleError(request, response);
+        }
     }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        helpDoPost(request, response);
+        try{
+            helpDoPost(request, response);
+        }
+        catch( Exception ex ){
+            LOGGER.info("Exception ex: " + ex.getMessage());
+            handleError(request, response);
+        }
 
     }
 
@@ -109,7 +121,7 @@ public class DownloadData extends HttpServlet {
             String listParam = request.getParameter("listParameters");
             if (listParam == null || listParam.equals("") || listParam.equals("empty")) {
                 request.setAttribute("messageError", "Please select a minimun of one capability to download");
-                RequestDispatcher dispatcher = request.getRequestDispatcher("Database?action=showData");
+                RequestDispatcher dispatcher = request.getRequestDispatcher("download.jsp");
                 dispatcher.forward(request, response);
             } else {
 
@@ -157,7 +169,7 @@ public class DownloadData extends HttpServlet {
                 String nameFile = fileTemp + aux;
                 createTarGzOfDirectory(filePath, nameFile);
 
-              
+
                 FileInputStream fileToDownload = new FileInputStream(nameFile);
                 ServletOutputStream out = response.getOutputStream();
                 response.setContentType("application/zip");
@@ -178,6 +190,7 @@ public class DownloadData extends HttpServlet {
 
         } catch (Exception ex) {
             LOGGER.severe("Exception: " + ex.getMessage());
+            handleError(request, response);
         }
     }
 
@@ -311,6 +324,15 @@ public class DownloadData extends HttpServlet {
         } catch (Exception ex) {
             LOGGER.severe("Exception: " + ex.getMessage());
         }
+
+
+    }
+
+    private void handleError(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
+        RequestDispatcher dispatcher = request.getRequestDispatcher("error.jsp");
+        request.getSession().setAttribute("criticalMessageError", "An error has ocurred, please contact with the webmaster");
+        dispatcher.forward(request, response);
 
 
     }

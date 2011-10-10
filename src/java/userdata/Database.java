@@ -12,12 +12,20 @@ import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import java.util.logging.Logger;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.http.HttpSession;
-import javax.servlet.jsp.jstl.sql.Result;
-import javax.servlet.jsp.jstl.sql.ResultSupport;
+
+import org.json.*;
 
 import java.util.Random;
+import jquery.datatables.controller.DataTablesParamUtility;
+import jquery.datatables.model.JQueryDataTableParamModel;
+
+
 
 /**
  *
@@ -105,7 +113,6 @@ public class Database extends HttpServlet {
 
 
                 if (resultSet.first() == true) {
-
                     RequestDispatcher disp = request.getRequestDispatcher("upload.jsp");
                     request.getSession().setAttribute("messageError", "There is already a capability whith this name, please write a new one");
                     disp.forward(request, response);
@@ -140,30 +147,105 @@ public class Database extends HttpServlet {
                     dispatcher.forward(request, response);
                 }
             } else if (action.equals("showData")) {
+                JQueryDataTableParamModel param = DataTablesParamUtility.getParam(request);
+                String sEcho = param.sEcho;
+
+
+
+                List<Capabilities> listCaps = new ArrayList();
+
+
                 Statement smt = connection.createStatement();
                 ResultSet resultSet = smt.executeQuery("SELECT * FROM capabilities");
-                Result result = ResultSupport.toResult(resultSet);
-                request.setAttribute("resCapabilities", result);
 
+                while (resultSet.next()) {
+                    String nameTemp = resultSet.getString("name");
+                    java.sql.Date dateTemp = resultSet.getDate("dateUpload");
+                    String userUploadTemp = resultSet.getString("userUpload");
+                    String keyWords = resultSet.getString("keyWords");
+                    String keyWordsArray[] = keyWords.split(";");
+                    List<String> keyWordsList = new ArrayList();
+                    LOGGER.info("LOG CAPABILITIES: " + "name: " + nameTemp + " userUpload: " + userUploadTemp + " keyWords: " + keyWords);
+                    for (int i = 0; i < keyWordsArray.length; i++) {
+                        keyWordsList.add(keyWordsArray[i]);
+                    }
+                    Capabilities capTemp = new Capabilities(nameTemp, dateTemp, userUploadTemp, keyWordsList);
+                    listCaps.add(capTemp);
+                }
 
-                //Look for a list with the top downloaded capabilities
 
                 String count = "SELECT COUNT(*) from capabilities";
                 ResultSet resCount = smt.executeQuery(count);
-                Integer tableLength = 0;
+                Integer iTotalRecords = 0;
+                Integer iTotalDisplayRecords = 0;
                 while (resCount.next()) {
-                    tableLength = resCount.getInt(1);
+                    iTotalRecords = resCount.getInt(1);
                 }
 
-                if (tableLength != 0) {
-                    String query = "SELECT name, timesdownloaded from capabilities order by timesdownloaded desc";
-                    ResultSet resultCaps = smt.executeQuery(query);
-                    Result resultCap = ResultSupport.toResult(resultCaps);
-                    request.setAttribute("resCapsOrdered", resultCap);
+
+                final int sortColumnIndex = param.iSortColumnIndex;
+                final int sortDirection = param.sSortDirection.equals("asc") ? -1 : 1;
+
+
+                Collections.sort(listCaps, new Comparator<Capabilities>() {
+
+                    @Override
+                    public int compare(Capabilities c1, Capabilities c2) {
+                        switch (sortColumnIndex) {
+                            case 0:
+                                return c1.getName().compareTo(c2.getName()) * sortDirection;
+                            case 1:
+                                return c1.getDate().compareTo(c2.getDate()) * sortDirection;
+                            case 2:
+                                return c1.getUserUpload().compareTo(c2.getUserUpload()) * sortDirection;             
+
+                        }
+                        return 0;
+                    }
+                });
+
+
+
+
+                List<Capabilities> capsFound = new ArrayList<Capabilities>();
+                for (Capabilities c : listCaps) {
+                    if (c.getName().toLowerCase().contains(param.sSearch.toLowerCase()) || c.getUserUpload().toLowerCase().contains(param.sSearch.toLowerCase())
+                            || c.getDate().toString().toLowerCase().contains(param.sSearch.toLowerCase())
+                            || c.getStringKeyWords().toLowerCase().contains(param.sSearch.toLowerCase())) {
+                        capsFound.add(c);
+                    }
                 }
 
-                RequestDispatcher dispatcher = request.getRequestDispatcher("download.jsp");
-                dispatcher.forward(request, response);
+                
+
+
+
+
+
+
+
+
+
+                iTotalDisplayRecords = listCaps.size();
+                JSONArray data = new JSONArray();
+                JSONObject jsonResponse = new JSONObject();
+
+                jsonResponse.put("sEcho", sEcho);
+                jsonResponse.put("iTotalRecords", iTotalRecords);
+                jsonResponse.put("iTotalDisplayRecords", iTotalDisplayRecords);
+
+                for (Capabilities cap : capsFound) {
+                    JSONArray row = new JSONArray();
+                    row.put(cap.getName()).put(cap.getDate().toString()).put(cap.getUserUpload()).put(cap.getStringKeyWords());
+                    data.put(row);
+                }
+
+                jsonResponse.put("aaData", data);
+                response.setContentType("application/json");
+                response.getWriter().print(jsonResponse.toString());
+
+
+
 
             } else if (action.equals("emptyFile")) {
                 request.getSession().setAttribute("messageError", "Please, write a name and select a file");
@@ -250,9 +332,13 @@ public class Database extends HttpServlet {
             }
 
 
-        } catch (SQLException ex) {
-            LOGGER.info("Error Insert " + ex.getMessage());
-            throw new ServletException("SQL Insert " + ex.getMessage());
+        } catch( JSONException ex ){
+            LOGGER.info("JSON Exception: " + ex.getMessage() );
+            handleError(request, response);
+        }
+        catch (SQLException ex) {
+            LOGGER.info("Exception: " + ex.getMessage());
+            handleError(request, response);
         }
     }
 
@@ -280,9 +366,20 @@ public class Database extends HttpServlet {
             }
             return id;
         } catch (java.sql.SQLException ex) {
-            System.out.println("Exception: " + ex.getMessage());
+            LOGGER.info("Exception: " + ex.getMessage());
             return "";
         }
 
     }
+
+    private void handleError(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
+        RequestDispatcher dispatcher = request.getRequestDispatcher("error.jsp");
+        request.getSession().setAttribute("criticalMessageError", "An error has ocurred, please contact with the webmaster");
+        dispatcher.forward(request, response);
+
+
+    }
 }
+
+   

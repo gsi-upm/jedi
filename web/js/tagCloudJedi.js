@@ -4,7 +4,7 @@ $(document).ready(function(){
 $("#cloud").tagcloud({sizemin:1, sizemax: 20,height:600});
 
       
-             $("#tags").tokenInput("AutoComplete", {theme: "facebook"});
+             
       
                         
 

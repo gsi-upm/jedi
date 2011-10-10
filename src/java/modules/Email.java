@@ -9,7 +9,8 @@ import java.util.*;
 import javax.mail.*;
 import javax.mail.internet.*;
 import javax.mail.PasswordAuthentication;
-import javax.mail.Authenticator;
+
+
 
 import java.util.logging.Logger;
 
@@ -21,6 +22,9 @@ import javax.servlet.ServletException;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+
+import javax.servlet.RequestDispatcher;
 
 /**
  *
@@ -114,7 +118,7 @@ public class Email extends HttpServlet implements Runnable {
         }
     }
 
-    public void Main() {
+    public void Main(HttpServletRequest request, HttpServletResponse response) {
         try {
 
             Email test = new Email("smtp.gmail.com");
@@ -124,6 +128,9 @@ public class Email extends HttpServlet implements Runnable {
             test.setBody("Hellooooo!!!");
             //test.send();
             test.send();
+            request.setAttribute("messageError", "Message sent correctly");
+            RequestDispatcher dispatcher = request.getRequestDispatcher("contact.jsp");
+            dispatcher.forward(request, response);
 
 
 
@@ -162,7 +169,7 @@ public class Email extends HttpServlet implements Runnable {
 
     private void petitionAux(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         LOGGER.info("EMAIL!!!");
-        String email = request.getParameter("email");
+        String email = request.getParameter("from");
         String subject = request.getParameter("subject");
         String textEmail = request.getParameter("bodyEmail");
         if (email == null || subject == null || textEmail == null) {
@@ -175,7 +182,7 @@ public class Email extends HttpServlet implements Runnable {
         if (!mat.find()) {
             request.getSession().setAttribute("messageError", "Please, write your email correctly");
         }
-        Main();
+        Main( request, response );
     }
 
     private class Authenticator extends javax.mail.Authenticator {
@@ -184,7 +191,7 @@ public class Email extends HttpServlet implements Runnable {
 
         public Authenticator() {
             String username = "ignacio.mendizabal.vazquez@gmail.com";
-            String password = "AlphaDelta1922";
+            String password = "BetaGamma1922";
             authentication = new PasswordAuthentication(username, password);
         }
 

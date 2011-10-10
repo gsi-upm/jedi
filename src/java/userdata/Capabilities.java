@@ -21,7 +21,6 @@ public class Capabilities {
     private List <File> listFile;
     private String nameFile;
     private List <String> keyWords;
-    private String stringAux;
 
     public Capabilities(){
         this.name = "";
@@ -32,10 +31,10 @@ public class Capabilities {
         this.listFile = new ArrayList<File>();
         this.nameFile = "";
         this.keyWords = new ArrayList<String>();
-        this.stringAux = "";
+
     }
     public Capabilities( String name, String id, java.sql.Date date, String timeUpload, String userUpload, String comments, List <File> listFile, 
-            String nameFile, List <String> keyWords, String stringAux){
+            String nameFile, List <String> keyWords ){
         this.name = name;
         this.id = id;
         this.dateUpload = date;
@@ -43,6 +42,13 @@ public class Capabilities {
         this.comments = comments;
         this.listFile = listFile;
         this.nameFile = nameFile;
+        this.keyWords = keyWords;
+    }
+
+    public Capabilities( String name, java.sql.Date date, String userUpload, List <String> keyWords ){
+        this.name = name;
+        this.dateUpload = date;
+        this.userUpload = userUpload;
         this.keyWords = keyWords;
     }
     
@@ -110,9 +116,7 @@ public class Capabilities {
 
     public void setKeyWords( List <String> keyWords ){
         this.keyWords = keyWords;
-    }
-
-  
+    }  
 
     public void addListFile( File file ){
         listFile.add(file);
@@ -120,5 +124,14 @@ public class Capabilities {
 
     public void addKeyWord( String keyWord ){
         keyWords.add(keyWord);
+    }
+
+    public String getStringKeyWords(){
+        String keyWordsList = "";
+            for( int i = 0; i < getKeyWords().size(); i++ ){
+                keyWordsList = keyWordsList + "," + getKeyWords().get(i);
+            }
+        keyWordsList = keyWordsList.substring(1, keyWordsList.length());
+        return keyWordsList;
     }
 }

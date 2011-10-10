@@ -21,7 +21,7 @@
       </c:choose>
       
       
-      <li><a href="<c:url value="Database?action=showData" />"> Download </a> </li>
+      <li><a href="<c:url value="download.jsp" />"> Download </a> </li>
     </ul>
     </div>
  <div id="logo">

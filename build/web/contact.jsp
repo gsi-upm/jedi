@@ -30,6 +30,7 @@
                         <li> <label> From: </label> <input type="text" name="from" />
                         <li> <label> Subject: </label> <input type="text" name="subject" />
                         <li> <label> Text </label> <textarea cols="40" rows="5" id="bodyEmail" name="bodyEmail"  > </textarea> </li>
+                        <li> <input type="submit" value="Send" /> </li>
                     </ul>
                 </form>
             </div>

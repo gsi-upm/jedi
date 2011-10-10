@@ -57,12 +57,14 @@
                     <ul>
                         <li> <label> Name </label> <input type="text"  id="nameCap" name="nameCap" /> </li>
                         <li> <label> Description </label> <textarea cols="40" rows="5" id="comments" name="comments"  > </textarea> </li>
-                        <div id="tagsText">
-                            <li> <label> Tags </label> <input type="text" id="tags" name="tags" /> </li>
+                        <div id="tagsText" class="aaa">
+                            <li> <label> Search tags </label> <input type="text" id="tags" name="tags" /> </li>
                         </div>
+                        <li>  </li>
                         <div id="newTag">
-                            <li> <label> Add a new tag </label> <input type="text" name="addTag" id="addTag" /> </li>
-                            <input type="button" onclick="addNewTag()" value="Add a new tag" />
+                            <li>  <input type="text" name="addTag" id="addTag" /> 
+                                <input type="button" onclick="addNewTag()" value="Add a new tag" />
+                            <input type="button" onclick="clearTags()" value="Clear all tags" /> </li>
                         </div>
 
                         <li> <label> Select a file to upload (Max size: 10MB)</label> <input type="file" id="uploadfile" name="uploadfile"  /> </li>
@@ -72,6 +74,7 @@
 
 
                 </form>
+
             </div>
             <%@include file="/WEB-INF/jspf/footer.jspf" %>
         </body>
@@ -85,7 +88,7 @@
      *   It makes a list with all tags clicked and put them together in a string
      */
     function addNewTag(){
-        var nodeTags = document.getElementById("tagsText").getElementsByTagName("ul");
+       /* var nodeTags = document.getElementById("tagsText").getElementsByTagName("ul");
         var ulTags = nodeTags[0];
         var li = document.createElement("li");
         li.setAttribute("class", "token-input-token-facebook");
@@ -102,8 +105,14 @@
         li.appendChild( p );
         li.appendChild( span );
         
-        ulTags.appendChild(li);
+        ulTags.appendChild(li);*/
+        $("#tags").tokenInput("add", {id: 0, name: "test"});
         
+
+    }
+
+    function clearTags(){
+       $("#tags").tokenInput("clear");
 
     }
 

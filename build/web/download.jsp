@@ -12,28 +12,105 @@
 <%@ taglib prefix="sql" uri="http://java.sun.com/jsp/jstl/sql" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
-<%--<sql:query var="comments">
-    SELECT * from capabilities
-    WHERE name = ? and id = ?
-    <sql:param value="${param.nameCap}"/>
-    <sql:param value="${param.idCap}" />
-</sql:query>
-    <ul>
-    <c:forEach var="comments" items="${comments.rows}">
-        <li> <c:out value="${comments.comment}" /> </li>
-    </c:forEach>
-</ul>--%>
-
-
-
 <html>
+    <style type="text/css" title="currentStyle">
+        @import "css/dataTables/demo_page.css";
+        @import "css/dataTables/demo_table.css";
+    </style>
 
-    
-    <%@include file="/WEB-INF/jspf/tagCloud.jspf" %>
+
+    <!--<%@include file="/WEB-INF/jspf/tagCloud.jspf" %>-->
+       <c:if test="${validUser == null}" >
+                <jsp:forward page="login.jsp">
+                    <jsp:param name="origUrL" value="download.jsp" />
+                    <jsp:param name="messageError" value="Please log in first" />
+                </jsp:forward>
+            </c:if>
+
+
+
+    <script type="text/javascript" src="js/jquery-1.4.4.min.js"> </script>    
+    <script type="text/javascript" src="js/jquery.dataTables.js"> </script>
+    <script type="text/javascript" charset="utf-8">
+     var oTable;
+
+        /* Formating function for row details */
+        function fnFormatDetails ( nTr )
+        {
+            var aData = oTable.fnGetData( nTr );
+            var sOut = '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">';
+            sOut += '<tr><td>Rendering engine:</td><td>'+aData[2]+' '+aData[5]+'</td></tr>';
+            sOut += '<tr><td>Link to source:</td><td>Could provide a link here</td></tr>';
+            sOut += '<tr><td>Extra info:</td><td>And any further details here (images etc)</td></tr>';
+            sOut += '</table>';
+
+            return sOut;
+        }
+
+
+
+
+        $(document).ready(function() {
+         oTable =   $('#displayData').dataTable( {
+                "bProcessing": true,
+                "bStateSave": true,
+                "bServerSide": true,
+                "sAjaxSource": "Database?action=showData",
+                "aoColumns": [
+                    { "sName": "Name", "sTitle": "Name", "sWidth": "20%", "bSortable": "true" },
+                    { "sName": "DateUpload", "sTitle": "Upload Date", "sWidth": "20%", "bSortable": "true" },
+                    { "sName": "user", "sTitle": "Uploaded by", "sWidth": "20%", "bSortable": "true" },
+                    { "sName": "tags", "sTitle": "Tags", "sWidth": "20%", "bSortable": "false"}
+                    
+
+                ],
+                "sPaginationType": "full_numbers",
+                "aaSorting": [[1,'asc']],
+                "oLanguage": {
+                    "sLengthMenu": "Page length: _MENU_",
+                    "sSearch": "Filter:",
+                    "sZeroRecords": "No matching records found"
+                },
+
+                "fnServerData": function ( sSource, aoData, fnCallback ) {
+
+                    aoData.push(
+                    { "name": "table", "value": "uklocationcodes" },
+                    { "name": "sql", "value": "SELECT id, varCode, varLocation" }
+                );
+
+                    $.ajax( {"dataType": 'json',
+                        "type": "POST",
+                        "url": sSource,
+                        "data": aoData,
+                        "success": fnCallback} );
+                }
+            } );
+        });
+
+        $('#displayData tbody td img').live( 'click', function () {
+            var nTr = this.parentNode.parentNode;
+            if ( this.src.match('details_close') )
+            {
+                /* This row is already open - close it */
+                this.src = "images/details_open.png";
+                oTable.fnClose( nTr );
+            }
+            else
+            {
+                /* Open this row */
+                this.src = "images/details_close.png";
+                oTable.fnOpen( nTr, fnFormatDetails(nTr), 'details' );
+            }
+        } );
+
+
+    </script>
 
     <div id="topRatingCaps" class="formUser">
         <c:choose>
             <c:when test="${resCapsOrdered.rowCount eq 0}">
+
                 No capabilities to show
             </c:when>
             <c:otherwise>
@@ -43,7 +120,7 @@
                     <c:forEach var="capsRating" items="${resCapsOrdered.rows}" varStatus="capsCounter">
                         <c:choose>
                             <c:when test="${capsCounter.count <= 5}">
-                                <li> ${capsRating.name} </li>
+                                <li> ${capsCounter.count} - ${capsRating.name} </li>
                             </c:when>
                         </c:choose>
                     </c:forEach>
@@ -63,61 +140,42 @@
         </head>
 
         <body>
-            <c:if test="${validUser == null}" >
-                <jsp:forward page="login.jsp">
-                    <jsp:param name="origUrL" value="Database?action=showData" />
-                    <jsp:param name="messageError" value="Please log in first" />
-                </jsp:forward>
-            </c:if>
-
+         
             <div id="main" class="round">
+                <div class="messageError">
+                    <p>    ${fn:escapeXml(messageError)}</p>
+                </div>
                 <div id="capabilities">
-                    <div class="capName">
-                        <c:choose>
-                            <c:when test="${resCapabilities.rowCount eq 0}">
-                                <select name="capList" size="4">
-                                    No capabilities
-                                </select>
-                            </c:when>
-                            <c:otherwise>
-                                <div class="messageError">
-                                    <p>    ${fn:escapeXml(messageError)}</p>
-                                </div>
-
-                                <form name="formCap" method="post" action="DownloadData" class="formUser">
-                                    <div id="selectOption">
-                                        <p> Capabilities </p>
-                                        <select name="capListName" multiple class="selectForm" size="4" >
-                                            <c:forEach var="capability" items="${resCapabilities.rows}" varStatus="selectCounter">
-                                                <c:choose>
-                                                    <c:when test="${selectCounter.count % 2 == 0}">
-                                                        <option class="selectFirstClass" ondblclick="addSelect( formCap.capListName.options[formCap.capListName.selectedIndex].value )"> ${capability.name}  </option>
-                                                    </c:when>
-                                                    <c:otherwise>
-                                                        <option class="selectSecondClass" ondblclick="addSelect( formCap.capListName.options[formCap.capListName.selectedIndex].value )"> ${capability.name}  </option>
-                                                    </c:otherwise>
-                                                </c:choose>
-                                            </c:forEach>
-                                        </select>
-                                        <p> Download </p>
-                                        <select name="capsSelected" multiple size="4" class="selectForm download">
-                                        </select>
-                                        <input type="hidden" name="listParameters" id="listParameters" />
-                                    </div>
-                                    <input type="button" value="Add" onClick="addSelect( formCap.capListName.options[formCap.capListName.selectedIndex].value )" />
-                                    <input type="button" value="Delete" onClick="deleteSelext( formCap.capsSelected.selectedIndex)" />
-                                    <input type="submit" value="Download" />
-                                </form>
-                            </c:otherwise>
-                        </c:choose>
+                    <div id="dt_displayData">
+                        <div id="container">
+                    <table cellpadding="0" cellspacing="0" border="0" class="display" id="displayData">
+                        <thead>
+                            <tr class="gradeA">
+                                <th align="left">Name</th>
+                                <th align="left">Upload Date</th>
+                                <th align="left">Upload User</th>
+                                <th align="left">Tags</th>
+                                
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td colspan="3" class="dataTables_empty">Loading data from server</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                            <div class="spacer"> </div>
                     </div>
+                    </div>
+       
+
+
                 </div>
             </div>
+
+
+
     </div>
-
-
-
-
 
 
 </body>
@@ -125,27 +183,27 @@
 
 <script language="javascript" type="text/javascript">
     function addSelect( text ){
-    var option1 = new Option(text,"textOption","","");
-    var select = document.formCap.capsSelected;
+        var option1 = new Option(text,"textOption","","");
+        var select = document.formCap.capsSelected;
 
-    var lengthCapsSelect = document.formCap.capsSelected.length;
-    var alreadyInTheList = false;
-    for(i=0;i<lengthCapsSelect;i++){
+        var lengthCapsSelect = document.formCap.capsSelected.length;
+        var alreadyInTheList = false;
+        for(i=0;i<lengthCapsSelect;i++){
 
-    if( document.formCap.capsSelected.options[i].text == text ){
-    alreadyInTheList = true;
-    }
-    }
-    if( alreadyInTheList == false ){
-    select.appendChild(option1);
-    document.getElementById("listParameters").value += text;
-    document.getElementById("listParameters").value += ',';
-    }
+            if( document.formCap.capsSelected.options[i].text == text ){
+                alreadyInTheList = true;
+            }
+        }
+        if( alreadyInTheList == false ){
+            select.appendChild(option1);
+            document.getElementById("listParameters").value += text;
+            document.getElementById("listParameters").value += ',';
+        }
     }
 
     function deleteSelext( selected){
-    var mySelect = document.forms['formCap'].elements['capsSelected'];
-    mySelect.options[selected] = null;
+        var mySelect = document.forms['formCap'].elements['capsSelected'];
+        mySelect.options[selected] = null;
     }
 
 

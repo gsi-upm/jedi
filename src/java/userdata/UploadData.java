@@ -79,7 +79,9 @@ public class UploadData extends HttpServlet {
         try {
             helpGetPost(request, response);
         } catch (Exception ex) {
-            System.out.println("Exception: " + ex.getMessage());
+          //System.out.println("Exception: " + ex.getMessage());
+            LOGGER.info("Exception: " + ex.getMessage());
+            handleError( request, response );
         }
     }
 
@@ -95,7 +97,9 @@ public class UploadData extends HttpServlet {
         try {
             helpGetPost(request, response);
         } catch (Exception ex) {
-            System.out.println("Exception: " + ex.getMessage());
+            //System.out.println("Exception: " + ex.getMessage());
+            LOGGER.info("Exception: " + ex.getMessage());
+            handleError( request, response );
         }
     }
 
@@ -112,7 +116,7 @@ public class UploadData extends HttpServlet {
         boolean isMultiPart = ServletFileUpload.isMultipartContent(request);
         if (isMultiPart) {
             request.setCharacterEncoding("UTF-8");
-            
+
             String comments = "";
             String nameCap = "";
             String fileSelected = "";
@@ -198,7 +202,7 @@ public class UploadData extends HttpServlet {
                             fileSelected = value;
                         } //Tags added by user
                         else if (name.equals("listTags")) {
-                            listTagsTemp = value;                                                       
+                            listTagsTemp = value;
                             String tagsUser[] = listTagsTemp.split(";");
                             for (int i = 0; i < tagsUser.length; i++) {
                                 c.addKeyWord(tagsUser[i]);
@@ -213,10 +217,9 @@ public class UploadData extends HttpServlet {
                 dispatcher.forward(request, response);
 
 
-            } catch (FileUploadException ex) {
-                System.out.println("Exception: " + ex.getMessage());
-            } catch (Exception ex) {
-                System.out.println("Exception: " + ex.getMessage());
+            }catch( Exception ex ){
+                LOGGER.info("Exception: " + ex.getMessage());
+                handleError(request, response);
             }
 
 
@@ -338,12 +341,20 @@ public class UploadData extends HttpServlet {
 
 
         } catch (Exception ex) {
-            System.out.println("Exception: " + ex.getMessage());
+            //System.out.println("Exception: " + ex.getMessage());
+            LOGGER.info("Exception:" + ex.getMessage());
+
 
         }
 
     }
+
+    private void handleError(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
+        RequestDispatcher dispatcher = request.getRequestDispatcher("error.jsp");
+        request.getSession().setAttribute("criticalMessageError", "An error has ocurred, please contact with the webmaster");
+        dispatcher.forward(request, response);
+
+
+    }
 }
-
-
-

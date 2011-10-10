@@ -16,11 +16,7 @@
 <div id="tagCloud" class="round">
     
     <ul id="cloud">
-        <li value="10"> Jadex </li>
-        <li value="15"> Intelligent Systems Group </li>
-        <li value="40"> Jadex Editor </li>
-        <li value="50"> Capabilities </li>
-
+  
         <c:forEach var="importantWords" items="${keyWords.rows}" varStatus="wordCounter">
             <c:set var="stringTemp" value="${importantWords.keywords}" />
             <c:forEach var="wordsSeparated" items="${fn:split(stringTemp, ';')}" >
