@@ -1,0 +1,17 @@
+Este proyecto es una aplicación web para compartir componentes, desarrollado en el proyecto Telcodev por Nacho Mendizábal.
+
+La biblioteca de componentes que se ha construido con el fin de facilitar la reutilización de componentes de desarrollo de servicios telco es una aplicación web basada en tecnologías Java. La elección de este lenguaje frente a otras posibilidades, como fue Ruby On Rails en su comienzo, ha sido debido a la facilidad que proporciona para manejar peticiones, manejo de bases de datos y compresión y descompresión de ficheros automáticamente.
+
+Se ha utilizado Java para escribir páginas en JSP (Java Server Page) así como los Servlets que manejan las peticiones en el servidor.
+A su vez, para el almacenamiento de los datos de ha empleado una base de datos SQL que se detallará a continuación.
+
+La página de subida de componentes contiene un formulario HTML con campos a rellenar por el usuario, como nombre del componente, descripción o palabras clave, entre otros. Las palabras clave pueden crearse o ser sugeridas gracias a un plugin de Jquery que se explicará más adelante.
+Una vez que los campos son rellenados, la petición es manejada por el servlet llamado “UploadData” del paquete “userdata”. Este servlet se encarga de obtener los datos del formulario y de tratarlos, de manera que luego puedan ser almacenados correctamente en la base de datos.
+Comprueba si el componente a subir tiene algún fichero comprimido en formato tar.gz y si es así, lo descomprime para su posterior clasificación.
+Una vez que se han obtenido los datos del formulario se crea un objeto del Bean “Capabilities” perteneciente al mismo paquete y que tiene como objetivo manejar los datos de los componentes que posteriormente van a ser almacenados en la base de datos y el Servlet “Database” los recupera y los almacena.
+
+Para añadir etiquetas o tags a los componentes hay dos opciones: Escribirlas manualmente y añadirlas a la base de datos u obtenerlas de ella. Para ello se ha utilizado el plugin de Jquery llamado “TokenInput”, que permite sugerir etiquetas a partir de las ya creadas anteriormente.
+Para conseguirlo, a medida que se escribe un texto en el campo correspondiente se buscan las coincidencias en la base de datos a través del Servlet “AutoComplete” del paquete “modules”. Lo que hace es buscar en la base de datos y, en el caso de encontrar coincidencias, devuelve los resultados en formato JSON (JavaScript Object Notation) para que el plugin los muestre.
+Para la visualización se ha utilizado otro plugin de Jquery, el JqueryTables, permitiendo ordenar y filtrar los componentes mediante un campo de búsqueda. 
+
+El Servlet que se encarga de manejar estas peticiones es el “DownloadData” del paquete “userdata”, permite descargar componentes tanto individualmente como varios a la vez, comprimiéndolos en un solo fichero.
